@@ -1,0 +1,15 @@
+http_server:
+  addresses: ""
+  port: 8080
+  read_timeout: 60s
+  write_timeout: 60s
+  read_header_timeout: 60s
+  shutdown_timeout: 60s
+database:
+  type: mongodb
+  mongo:
+    address: "tphuc:tphuc@cluster0.f6wcv.mongodb.net/social?retryWrites=true&w=majority"
+    timeout: 15s
+    username: "tphuc"
+    password: "tphuc"
+    database: "social"
