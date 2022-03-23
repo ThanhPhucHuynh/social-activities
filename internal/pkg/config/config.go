@@ -26,6 +26,9 @@ type (
 			Type  string  `mapstructure:"type"`
 			Mongo MongoDB `mapstructure:"mongo"`
 		} `mapstructure:"database"`
+		Jwt struct {
+			Duration time.Duration `mapstructure:"duration"`
+		} `mapstructure:"jwt"`
 	}
 
 	HTTPServer struct {

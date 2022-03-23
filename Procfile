@@ -1,0 +1,1 @@
+worker: ./social-activities

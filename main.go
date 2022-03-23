@@ -13,8 +13,6 @@ import (
 )
 
 func main() {
-	fmt.Println("conga")
-
 	configPath := flag.String("config", "configs", "set configs path, default as: 'configs'")
 	stage := flag.String("stage", "dev", "set working environment")
 

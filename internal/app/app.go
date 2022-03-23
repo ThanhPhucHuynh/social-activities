@@ -14,6 +14,10 @@ import (
 	userHandler "social-activities/internal/app/handlers/user"
 	userRepository "social-activities/internal/app/repositories/user"
 	userSrv "social-activities/internal/app/services/user"
+
+	officerHandler "social-activities/internal/app/handlers/officer"
+	officerRepository "social-activities/internal/app/repositories/officer"
+	officerSrv "social-activities/internal/app/services/officer"
 )
 
 const (
@@ -48,6 +52,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	// })
 
 	var userRepo userSrv.Repository
+	var officerRepo officerSrv.Repository
 
 	switch conns.Database.Type {
 	case db.TypeMongoDB:
@@ -56,7 +61,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			logger.Panicf("failed to dial to target server, err: %v", err)
 		}
 		userRepo = userRepository.NewMongoRepository(s)
-
+		officerRepo = officerRepository.NewMongoRepository(s)
 	default:
 		panic("database type not supported: " + conns.Database.Type)
 	}
@@ -65,19 +70,28 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	userService := userSrv.NewService(conns, &em, userRepo, userLogger)
 	userHandler := userHandler.New(conns, &em, userService, userLogger)
 
+	officerLogger := logger.WithField("package", "user")
+	officerService := officerSrv.NewService(conns, &em, officerRepo, officerLogger)
+	officerHandler := officerHandler.New(conns, &em, officerService, officerLogger)
+
 	routes := []route{
 		{
 			path:    "/test",
 			method:  get,
 			handler: userHandler.Test,
 		},
+		{
+			path:    "/register",
+			method:  post,
+			handler: officerHandler.RegisterHandler,
+		},
 	}
 
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
-		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
-		AllowHeaders:     "",
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowHeaders: "",
 	}))
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
@@ -100,7 +114,8 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 }
 
 func (app *App) Start() {
-	app.log.Fatal(app.server.Listen(fmt.Sprintf(":%d", app.conf.HTTPServer.Port)))
+
+	app.log.Fatal(app.server.Listen(fmt.Sprintf("0.0.0.0:%d", app.conf.HTTPServer.Port)))
 }
 
 func (app *App) Stop() {

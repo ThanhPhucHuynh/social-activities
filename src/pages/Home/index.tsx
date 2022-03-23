@@ -13,7 +13,7 @@ export declare type RangeValue<DateType> = [EventValue<DateType>, EventValue<Dat
 export declare type EventValue<DateType> = DateType | null;
 
 function Home(): React.ReactElement {
-  const { RangePicker, onChange, onOk } = useHook();
+  const { RangePicker, onChange, onOk, data, setData } = useHook();
 
   React.useEffect(() => {
     api.get('https://random-data-api.com/api/restaurant/random_restaurant').then((res) => {
@@ -23,6 +23,7 @@ function Home(): React.ReactElement {
 
     api.get('').then((res) => {
       console.log(res);
+      setData(res.data);
       return res;
     });
   });
@@ -36,7 +37,7 @@ function Home(): React.ReactElement {
           <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
         </Box>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Edit <code>src/App.tsx</code> and save to reload. {data}
         </p>
         <a
           className="App-link"
