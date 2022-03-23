@@ -18,7 +18,11 @@ function Home(): React.ReactElement {
   React.useEffect(() => {
     api.get('https://random-data-api.com/api/restaurant/random_restaurant').then((res) => {
       console.log(res);
+      return res;
+    });
 
+    api.get('').then((res) => {
+      console.log(res);
       return res;
     });
   });
