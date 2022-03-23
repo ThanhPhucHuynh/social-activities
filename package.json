@@ -40,7 +40,7 @@
     "lint:fix": "eslint . --fix"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,md}": "eslint --cache .  --fix"
+    "*.{js,jsx,ts,tsx,css,md}": "eslint --cache --fix"
   },
   "eslintConfig": {
     "extends": [
