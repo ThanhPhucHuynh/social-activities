@@ -33,14 +33,14 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "set DISABLE_ESLINT_PLUGIN=true && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "lint:fix": "eslint . --fix"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,css,md}": "eslint --cache .  --fix"
   },
   "eslintConfig": {
     "extends": [

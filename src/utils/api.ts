@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { ObjectType } from "typescript";
-import { config } from "../config";
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { ObjectType } from 'typescript';
+import { config } from '../config';
 
 class API {
   private instance: AxiosInstance;
@@ -9,7 +9,7 @@ class API {
   constructor() {
     const instance: AxiosInstance = axios.create({
       headers: {
-        "Content-Type": "application/json;charset=utf-8",
+        'Content-Type': 'application/json;charset=utf-8',
       },
     });
     instance.interceptors.response.use(this.handleSuccess, this.handleError);
@@ -26,9 +26,7 @@ class API {
     this.instance = instance;
   }
 
-  handleSuccess: ((value: AxiosResponse<any, any>) => any) | undefined = (
-    response
-  ) => {
+  handleSuccess: ((value: AxiosResponse<any, any>) => any) | undefined = (response) => {
     return response;
   };
 
@@ -36,38 +34,29 @@ class API {
     return Promise.reject(error);
   };
 
-  get = (url: string): Promise<AxiosResponse<any, any>> =>
-    this.instance.get(url);
+  get = (url: string): Promise<AxiosResponse<any, any>> => this.instance.get(url);
 
   post = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
     this.instance.post(`${url}`, payload);
 
-  patch = (
-    url: string,
-    payload: ObjectType
-  ): Promise<AxiosResponse<any, any>> => this.instance.patch(`${url}`, payload);
+  patch = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
+    this.instance.patch(`${url}`, payload);
 
   put = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
     this.instance.put(`${url}`, payload);
 
-  delete = (
-    url: string,
-    payload: ObjectType
-  ): Promise<AxiosResponse<any, any>> =>
+  delete = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
     this.instance.delete(`${url}`, { data: payload });
 
-  upload = (
-    url: string,
-    formData: FormData
-  ): Promise<AxiosResponse<any, any>> =>
+  upload = (url: string, formData: FormData): Promise<AxiosResponse<any, any>> =>
     this.instance.post(`${url}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
   export(url: string) {
     return this.instance.get(`${url}`, {
-      responseType: "blob",
+      responseType: 'blob',
     });
   }
 }

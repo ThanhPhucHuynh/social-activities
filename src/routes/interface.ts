@@ -4,8 +4,8 @@ interface routeI {
 }
 
 const routes: routeI = {
-  HOME: "/",
-  NOT_FOUND: "*",
+  HOME: '/',
+  NOT_FOUND: '*',
 };
 
 export { routes };

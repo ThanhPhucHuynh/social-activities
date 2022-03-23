@@ -1,7 +1,7 @@
-import React from "react";
-import * as animationData from "../../assets/lottie/notFound.json";
-import Lottie from "react-lottie";
-import useWindowDimensions from "../../config/constants";
+import React from 'react';
+import * as animationData from '../../assets/lottie/notFound.json';
+import Lottie from 'react-lottie';
+import useWindowDimensions from '../../config/constants';
 
 const NotFound = () => {
   return (

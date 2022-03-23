@@ -1,19 +1,11 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useRoutes,
-} from "react-router-dom";
-import { Home, NotFound } from "../pages";
-import { routes } from "./interface";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useRoutes } from 'react-router-dom';
+import { Home, NotFound } from '../pages';
+import { routes } from './interface';
 
 const routeItems: {
   path?: string;
-  element:
-    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-    | null
-    | undefined;
+  element: React.ReactElement<any, string | React.JSXElementConstructor<any>> | null | undefined;
   index?: boolean | undefined;
   key?: React.Key | null | undefined;
   caseSensitive?: boolean | undefined;

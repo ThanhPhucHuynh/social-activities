@@ -1,3 +1,3 @@
-import eslintrc from "./.eslintrc.json";
+import eslintrc from './.eslintrc.json';
 
 export default eslintrc;
