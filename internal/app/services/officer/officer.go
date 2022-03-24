@@ -17,6 +17,7 @@ import (
 type Repository interface {
 	Test(ctx context.Context) string
 	FindByCode(ctx context.Context, code string) (*types.Officer, error)
+	FindByEmail(ctx context.Context, email string) (*types.Officer, error)
 	Insert(ctx context.Context, user types.Officer) error
 }
 
@@ -48,7 +49,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		return nil, errors.Wrap(errors.New("Code exits"), "Email exits, can't insert user")
 	}
 
-	userLogin.Password, _ = jwt.HashPassword(userLogin.Password)
+	*userLogin.Password, _ = jwt.HashPassword(*userLogin.Password)
 	officer := types.Officer{
 		ID:       primitive.NewObjectID(),
 		Name:     userLogin.Name,
@@ -90,4 +91,49 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Code:  officer.Code,
 		Token: tokenString}, nil
 
+}
+
+func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*types.UserResponseSignUp, error) {
+
+	user, err := s.repo.FindByEmail(ctx, userLogin.Email)
+	if err != nil {
+		s.logger.Errorf("Email email exits", err)
+		return nil, errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
+	}
+
+	if !jwt.IsCorrectPassword(userLogin.Password, *user.Password) {
+		s.logger.Errorf("Password incorrect", userLogin.Email)
+		return nil, errors.Wrap(errors.New("Password isn't like password from database"), "Password incorrect")
+	}
+
+	var tokenString string
+	tokenString, error := jwt.GenToken(types.OfficerInToken{
+		ID:    user.ID,
+		Name:  user.Name,
+		Code:  user.Code,
+		Email: user.Email}, s.conf.Jwt.Duration)
+
+	if error != nil {
+		s.logger.Errorf("Can not gen token", error)
+		return nil, errors.Wrap(error, "Can't gen token")
+	}
+	s.logger.Infof("Login completed ", user.Email)
+	return &types.UserResponseSignUp{
+		Name:  user.Name,
+		Email: user.Email,
+		ID:    user.ID,
+		Code:  user.Code,
+		Token: tokenString}, nil
+}
+
+func (s *Service) MeSrv(ctx context.Context, email string) (*types.Officer, error) {
+
+	user, err := s.repo.FindByEmail(ctx, email)
+	if err != nil {
+		s.logger.Errorf("Email email exits", err)
+		return nil, errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
+	}
+	user.Password = nil
+	s.logger.Infof("MeSrv completed ", user.Email)
+	return user, nil
 }

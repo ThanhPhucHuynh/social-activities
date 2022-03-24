@@ -47,6 +47,12 @@ func (r *MongoRepository) FindByCode(ctx context.Context, code string) (*types.O
 	return officer, err
 }
 
+func (r *MongoRepository) FindByEmail(ctx context.Context, email string) (*types.Officer, error) {
+	var officer *types.Officer
+	err := r.collection().FindOne(ctx, bson.M{"email": email}).Decode(&officer)
+	return officer, err
+}
+
 func (r *MongoRepository) Insert(ctx context.Context, user types.Officer) error {
 	_, err := r.collection().InsertOne(ctx, user)
 	return err

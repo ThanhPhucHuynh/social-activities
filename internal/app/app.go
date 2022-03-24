@@ -7,6 +7,7 @@ import (
 	"social-activities/internal/app/db"
 	"social-activities/internal/pkg/config"
 	"social-activities/internal/pkg/glog"
+	"social-activities/internal/pkg/middleware"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -36,9 +37,9 @@ type (
 	}
 
 	route struct {
-		path    string
-		method  string
-		handler func(c *fiber.Ctx) error
+		path     string
+		method   string
+		handlers []func(c *fiber.Ctx) error
 	}
 )
 
@@ -74,16 +75,37 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	officerService := officerSrv.NewService(conns, &em, officerRepo, officerLogger)
 	officerHandler := officerHandler.New(conns, &em, officerService, officerLogger)
 
+	middleware := middleware.New(conns, &em)
+
 	routes := []route{
 		{
-			path:    "/test",
-			method:  get,
-			handler: userHandler.Test,
+			path:   "/test",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				userHandler.Test,
+			},
 		},
 		{
-			path:    "/register",
-			method:  post,
-			handler: officerHandler.RegisterHandler,
+			path:   "/register",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				officerHandler.RegisterHandler,
+			},
+		},
+		{
+			path:   "/login",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				officerHandler.LoginHandler,
+			},
+		},
+		{
+			path:   "/me",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.GetMe,
+			},
 		},
 	}
 
@@ -98,12 +120,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	})
 
 	for _, rt := range routes {
-		h := rt.handler
-		// hh := fiber.Handler
-		// for _, mdw := range rt.middlewares {
-		// 	h = mdw(h, &em)
-		// }
-		app.Add(rt.method, rt.path, h)
+		app.Add(rt.method, rt.path, rt.handlers...)
 	}
 
 	return &App{

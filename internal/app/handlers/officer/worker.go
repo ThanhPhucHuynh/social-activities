@@ -18,6 +18,8 @@ type (
 	service interface {
 		TestS(ctx context.Context) string
 		RegisterSrv(ctx context.Context, userLogin types.Officer) (*types.UserResponseSignUp, error)
+		LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*types.UserResponseSignUp, error)
+		MeSrv(ctx context.Context, email string) (*types.Officer, error)
 	}
 
 	Handler struct {
@@ -56,4 +58,31 @@ func (h *Handler) RegisterHandler(c *fiber.Ctx) error {
 	}
 
 	return respond.JSON(c, http.StatusOK, officer)
+}
+
+func (h *Handler) LoginHandler(c *fiber.Ctx) error {
+
+	var UserLogin types.OfficerLogin
+
+	if err := json.Unmarshal(c.Body(), &UserLogin); err != nil {
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body", err)
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
+	}
+	user, err := h.srv.LoginSrv(c.UserContext(), UserLogin)
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
+
+	}
+
+	return respond.JSON(c, http.StatusOK, user)
+}
+
+func (h *Handler) GetMe(c *fiber.Ctx) error {
+	u := c.Locals("officer").(types.Claims)
+	user, err := h.srv.MeSrv(c.UserContext(), u.Email)
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
+
+	}
+	return respond.JSON(c, http.StatusOK, user)
 }
