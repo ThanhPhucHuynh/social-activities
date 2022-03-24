@@ -17,9 +17,10 @@ type MongoRepository struct {
 }
 
 type User struct {
-	ID           primitive.ObjectID `json:"_id" bson:"_id,omitempty" validate:"required"`
-	Name         string             `json:"name" bson:"name" validate:"required"`
+	ID   primitive.ObjectID `json:"_id" bson:"_id,omitempty" validate:"required"`
+	Name string             `json:"name" bson:"name" validate:"required"`
 }
+
 func NewMongoRepository(c *mongo.Client) *MongoRepository {
 	return &MongoRepository{
 		client: c,
@@ -29,10 +30,10 @@ func NewMongoRepository(c *mongo.Client) *MongoRepository {
 // this method helps insert user
 func (r *MongoRepository) Test(ctx context.Context) string {
 	_, err := r.collection().InsertOne(ctx, User{
-		ID: primitive.NewObjectID(),
+		ID:   primitive.NewObjectID(),
 		Name: "test",
 	})
-	if err != nil{
+	if err != nil {
 		return "con heo, not create"
 	}
 	return "con cho"
