@@ -1,1 +1,1 @@
-worker: ./social-activities
+web: ./social-activities
