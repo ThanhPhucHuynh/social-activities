@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"social-activities/internal/pkg/glog"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,6 +28,9 @@ type (
 			Type  string  `mapstructure:"type"`
 			Mongo MongoDB `mapstructure:"mongo"`
 		} `mapstructure:"database"`
+		Jwt struct {
+			Duration time.Duration `mapstructure:"duration"`
+		} `mapstructure:"jwt"`
 	}
 
 	HTTPServer struct {
@@ -87,7 +92,15 @@ func ReadCongfig(path string, state string) (*Config, error) {
 		}
 		log.Printf("config: %+v", config)
 	})
-
+	fmt.Println(os.Getenv("PORT") == "")
+	if os.Getenv("PORT") == "" {
+		return &config, nil
+	}
+	p, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		log.Printf("Atoi port:", err)
+	}
+	config.HTTPServer.Port = p
 	return &config, nil
 }
 

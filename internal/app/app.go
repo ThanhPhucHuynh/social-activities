@@ -7,6 +7,7 @@ import (
 	"social-activities/internal/app/db"
 	"social-activities/internal/pkg/config"
 	"social-activities/internal/pkg/glog"
+	"social-activities/internal/pkg/middleware"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,6 +15,10 @@ import (
 	userHandler "social-activities/internal/app/handlers/user"
 	userRepository "social-activities/internal/app/repositories/user"
 	userSrv "social-activities/internal/app/services/user"
+
+	officerHandler "social-activities/internal/app/handlers/officer"
+	officerRepository "social-activities/internal/app/repositories/officer"
+	officerSrv "social-activities/internal/app/services/officer"
 )
 
 const (
@@ -32,9 +37,9 @@ type (
 	}
 
 	route struct {
-		path    string
-		method  string
-		handler func(c *fiber.Ctx) error
+		path     string
+		method   string
+		handlers []func(c *fiber.Ctx) error
 	}
 )
 
@@ -48,6 +53,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	// })
 
 	var userRepo userSrv.Repository
+	var officerRepo officerSrv.Repository
 
 	switch conns.Database.Type {
 	case db.TypeMongoDB:
@@ -56,7 +62,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			logger.Panicf("failed to dial to target server, err: %v", err)
 		}
 		userRepo = userRepository.NewMongoRepository(s)
-
+		officerRepo = officerRepository.NewMongoRepository(s)
 	default:
 		panic("database type not supported: " + conns.Database.Type)
 	}
@@ -65,31 +71,56 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	userService := userSrv.NewService(conns, &em, userRepo, userLogger)
 	userHandler := userHandler.New(conns, &em, userService, userLogger)
 
+	officerLogger := logger.WithField("package", "user")
+	officerService := officerSrv.NewService(conns, &em, officerRepo, officerLogger)
+	officerHandler := officerHandler.New(conns, &em, officerService, officerLogger)
+
+	middleware := middleware.New(conns, &em)
+
 	routes := []route{
 		{
-			path:    "/test",
-			method:  get,
-			handler: userHandler.Test,
+			path:   "/test",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				userHandler.Test,
+			},
+		},
+		{
+			path:   "/register",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				officerHandler.RegisterHandler,
+			},
+		},
+		{
+			path:   "/login",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				officerHandler.LoginHandler,
+			},
+		},
+		{
+			path:   "/me",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.GetMe,
+			},
 		},
 	}
 
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
-		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
-		AllowHeaders:     "",
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowHeaders: "",
 	}))
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
 	for _, rt := range routes {
-		h := rt.handler
-		// hh := fiber.Handler
-		// for _, mdw := range rt.middlewares {
-		// 	h = mdw(h, &em)
-		// }
-		app.Add(rt.method, rt.path, h)
+		app.Add(rt.method, rt.path, rt.handlers...)
 	}
 
 	return &App{
@@ -100,7 +131,8 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 }
 
 func (app *App) Start() {
-	app.log.Fatal(app.server.Listen(fmt.Sprintf(":%d", app.conf.HTTPServer.Port)))
+
+	app.log.Fatal(app.server.Listen(fmt.Sprintf("0.0.0.0:%d", app.conf.HTTPServer.Port)))
 }
 
 func (app *App) Stop() {

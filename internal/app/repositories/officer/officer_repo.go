@@ -1,9 +1,11 @@
-package userRepo
+package officerRepo
 
 import (
 	"context"
+	"social-activities/internal/app/types"
 
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -39,6 +41,23 @@ func (r *MongoRepository) Test(ctx context.Context) string {
 	return "con cho"
 }
 
+func (r *MongoRepository) FindByCode(ctx context.Context, code string) (*types.Officer, error) {
+	var officer *types.Officer
+	err := r.collection().FindOne(ctx, bson.M{"code": code}).Decode(&officer)
+	return officer, err
+}
+
+func (r *MongoRepository) FindByEmail(ctx context.Context, email string) (*types.Officer, error) {
+	var officer *types.Officer
+	err := r.collection().FindOne(ctx, bson.M{"email": email}).Decode(&officer)
+	return officer, err
+}
+
+func (r *MongoRepository) Insert(ctx context.Context, user types.Officer) error {
+	_, err := r.collection().InsertOne(ctx, user)
+	return err
+}
+
 func (r *MongoRepository) collection() *mongo.Collection {
-	return r.client.Database("social").Collection("test")
+	return r.client.Database("social").Collection("officer")
 }
