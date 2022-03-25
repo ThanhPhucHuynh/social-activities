@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useRoutes } from 'react-router-dom';
-import { Home, NotFound } from '../pages';
+import { Home, LoginPage, NotFound } from '../pages';
 import { routes } from './interface';
 
 const routeItems: {
@@ -19,18 +19,15 @@ const routeItems: {
     path: routes.NOT_FOUND,
     element: <NotFound />,
   },
+  {
+    path: routes.LOGIN,
+    element: <LoginPage />,
+  },
 ];
-const RouteResult = () => {
-  const routes = useRoutes(routeItems);
-  return routes;
-};
+const RouteResult = () => useRoutes(routeItems);
 const RouterNavigation = () => {
-  //   const routeResult = useRoutes(routeItems);
   return (
     <Router>
-      {/* {routeItems.map((item, i) => (
-        <Route key={i} {...item} />
-      ))} */}
       <RouteResult />
     </Router>
   );
