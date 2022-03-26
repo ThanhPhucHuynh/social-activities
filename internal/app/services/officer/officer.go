@@ -45,7 +45,7 @@ func (s *Service) TestS(ctx context.Context) string {
 func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*types.UserResponseSignUp, error) {
 
 	if _, err := s.repo.FindByCode(ctx, userLogin.Code); err == nil {
-		s.logger.Errorf("Email email exits", err)
+		s.logger.Errorf("Email email exits %v", err)
 		return nil, errors.Wrap(errors.New("Code exits"), "Email exits, can't insert user")
 	}
 
@@ -67,7 +67,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		UpdateAt: time.Now()}
 
 	if err := s.repo.Insert(ctx, officer); err != nil {
-		s.logger.Errorf("Can't insert user", err)
+		s.logger.Errorf("Can't insert user %v", err)
 		return nil, errors.Wrap(err, "Can't insert user")
 	}
 
@@ -79,7 +79,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 	}, s.conf.Jwt.Duration)
 
 	if err != nil {
-		s.logger.Errorf("Can't gen token after insert", err)
+		s.logger.Errorf("Can't gen token after insert %v", err)
 		return nil, errors.Wrap(err, "Can't insert user")
 	}
 	s.logger.Infof("Register completed", officer)
@@ -97,12 +97,12 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 
 	user, err := s.repo.FindByEmail(ctx, userLogin.Email)
 	if err != nil {
-		s.logger.Errorf("Email email exits", err)
+		s.logger.Errorf("Email email exits %v", err)
 		return nil, errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
 	}
 
 	if !jwt.IsCorrectPassword(userLogin.Password, *user.Password) {
-		s.logger.Errorf("Password incorrect", userLogin.Email)
+		s.logger.Errorf("Password incorrect %v", userLogin.Email)
 		return nil, errors.Wrap(errors.New("Password isn't like password from database"), "Password incorrect")
 	}
 
@@ -114,7 +114,7 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 		Email: user.Email}, s.conf.Jwt.Duration)
 
 	if error != nil {
-		s.logger.Errorf("Can not gen token", error)
+		s.logger.Errorf("Can not gen token %v", error)
 		return nil, errors.Wrap(error, "Can't gen token")
 	}
 	s.logger.Infof("Login completed ", user.Email)
@@ -130,7 +130,7 @@ func (s *Service) MeSrv(ctx context.Context, email string) (*types.Officer, erro
 
 	user, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
-		s.logger.Errorf("Email email exits", err)
+		s.logger.Errorf("Email email exits %v", err)
 		return nil, errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
 	}
 	user.Password = nil

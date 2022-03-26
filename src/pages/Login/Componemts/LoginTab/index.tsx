@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { Box } from '@mui/material';
@@ -8,29 +9,28 @@ import { fetchLoginRequest } from '../../../../redux/actions';
 import { RootState } from '../../../../redux/reducers/rootReducer';
 
 const LoginTab = () => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
   const dispatch = useDispatch();
-  const { pending, officer, error } = useSelector((state: RootState) => state.auth);
+  const { pending, officer } = useSelector((state: RootState) => state.auth);
 
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const onFinish = (values: any) => {
     console.log('Success:', values);
     handleLogin(values.email, values.password);
   };
 
-  const handleLogin = (email: string, password: string) => {
-    setIsLoading(true);
-    dispatch(fetchLoginRequest({ email: email, password: password }));
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+  const handleLogin = async (email: string, password: string) => {
+    await dispatch(fetchLoginRequest({ email: email, password: password }));
+    console.log(officer);
+
+    if (officer) {
+      history.go(0);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
-  // return <React.Fragment></React.Fragment>;
+
   return (
     <React.Fragment>
       <Box height={height * 0.8} style={{ padding: 0 }}>
@@ -50,7 +50,7 @@ const LoginTab = () => {
                 fontSize: 'xx-large',
               }}
             >
-              Login + {officer?.email}
+              Login
             </p>
           </Box>
           <Form

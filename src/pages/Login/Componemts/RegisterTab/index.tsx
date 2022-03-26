@@ -1,10 +1,11 @@
 import React from 'react';
-import { Form, Input, Button, Checkbox, DatePicker } from 'antd';
+import { Form, Input, Button, Checkbox, DatePicker, Select } from 'antd';
 import { Box } from '@mui/material';
 import useWindowDimensions from '../../../../config/constants';
 const config = {
   rules: [{ type: 'object' as const, required: true, message: 'Please select time!' }],
 };
+const { Option } = Select;
 const Register = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
@@ -24,6 +25,19 @@ const Register = () => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  const onGenderChange = (value: string) => {
+    // switch (value) {
+    //   case 'male':
+    //     this.formRef.current!.setFieldsValue({ note: 'Hi, man!' });
+    //     return;
+    //   case 'female':
+    //     this.formRef.current!.setFieldsValue({ note: 'Hi, lady!' });
+    //     return;
+    //   case 'other':
+    //     this.formRef.current!.setFieldsValue({ note: 'Hi there!' });
+    // }
+  };
+
   return (
     <Box height={height * 0.8} style={{ padding: 0 }}>
       <Box
@@ -56,6 +70,13 @@ const Register = () => {
           autoComplete="off"
         >
           <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: 'Please input your name!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
             label="Email"
             name="email"
             rules={[{ required: true, message: 'Please input your email!' }]}
@@ -70,7 +91,32 @@ const Register = () => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item name="date-picker" label="DatePicker" {...config}>
+          <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
+            <Select
+              placeholder="Select a option and change input text above"
+              onChange={onGenderChange}
+              allowClear
+            >
+              <Option value="male">male</Option>
+              <Option value="female">female</Option>
+              <Option value="other">other</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Code ID"
+            name="code"
+            rules={[{ required: true, message: 'Please input your code ID!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Phone"
+            name="phone"
+            rules={[{ required: true, message: 'Please input your phone!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="birthday" label="DatePicker" {...config}>
             <DatePicker />
           </Form.Item>
           <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>

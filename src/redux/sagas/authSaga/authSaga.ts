@@ -1,4 +1,4 @@
-import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 import { getAuth } from '../../../services/auth';
 import { loadAuthFailure, loadAuthSuccess } from '../../actions';
 import { LoadAuth } from '../../ActionTypes/authType';
@@ -12,7 +12,8 @@ function* fetchAuthSaga() {
         officer: response,
       })
     );
-  } catch (e: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any | string) {
     yield put(
       loadAuthFailure({
         error: e,

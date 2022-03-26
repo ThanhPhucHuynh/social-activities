@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from 'axios';
-import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { AxiosResponse } from 'axios';
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 import api from '../../../utils/api';
 import { fetchLoginFailure, fetchLoginSuccess } from '../../actions';
 import { LoginTypes } from '../../ActionTypes/authType';
@@ -18,6 +18,7 @@ function* fetchLoginSaga(P: FetchLoginRequest) {
         officer: response.data,
       })
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     yield put(
       fetchLoginFailure({
@@ -27,8 +28,6 @@ function* fetchLoginSaga(P: FetchLoginRequest) {
   }
 }
 function* loginSaga() {
-  //   yield takeLatest(LoginTypes.FETCH_LOGIN_FAILURE, fetchLoginSaga);
-
   yield all([takeEvery(LoginTypes.FETCH_LOGIN_REQUEST, fetchLoginSaga)]);
 }
 
