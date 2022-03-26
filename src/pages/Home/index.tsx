@@ -36,9 +36,11 @@ function Home(): React.ReactElement {
           <Slider size="small" defaultValue={70} aria-label="Small" valueLabelDisplay="auto" />
           <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
         </Box>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload. {data}
-        </p>
+        <div>
+          <p>
+            Edit <code>src/App.tsx</code> and save to reload. {data}
+          </p>
+        </div>
         <a
           className="App-link"
           href="https://reactjs.org"
