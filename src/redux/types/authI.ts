@@ -6,6 +6,7 @@ export interface IOfficer {
   email: string;
   code: string;
   role?: string;
+  avatar: string;
   token: string;
 }
 

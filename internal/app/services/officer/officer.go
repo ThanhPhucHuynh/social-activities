@@ -85,11 +85,13 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 	s.logger.Infof("Register completed", officer)
 
 	return &types.UserResponseSignUp{
-		ID:    officer.ID,
-		Name:  officer.Name,
-		Email: officer.Email,
-		Code:  officer.Code,
-		Token: tokenString}, nil
+		ID:     officer.ID,
+		Name:   officer.Name,
+		Email:  officer.Email,
+		Code:   officer.Code,
+		Avatar: officer.Avatar,
+		Role:   officer.Code,
+		Token:  tokenString}, nil
 
 }
 
@@ -119,11 +121,13 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 	}
 	s.logger.Infof("Login completed ", user.Email)
 	return &types.UserResponseSignUp{
-		Name:  user.Name,
-		Email: user.Email,
-		ID:    user.ID,
-		Code:  user.Code,
-		Token: tokenString}, nil
+		Name:   user.Name,
+		Email:  user.Email,
+		ID:     user.ID,
+		Code:   user.Code,
+		Avatar: user.Avatar,
+		Role:   user.Code,
+		Token:  tokenString}, nil
 }
 
 func (s *Service) MeSrv(ctx context.Context, email string) (*types.Officer, error) {
