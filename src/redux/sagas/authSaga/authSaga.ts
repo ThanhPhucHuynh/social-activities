@@ -12,8 +12,8 @@ function* fetchAuthSaga() {
         officer: response,
       })
     );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e: any | string) {
+  } catch (e: any) {
+    // error
     yield put(
       loadAuthFailure({
         error: e,

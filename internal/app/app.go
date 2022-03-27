@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"social-activities/internal/app/db"
+	"social-activities/internal/pkg/cities"
 	"social-activities/internal/pkg/config"
 	"social-activities/internal/pkg/glog"
 	"social-activities/internal/pkg/middleware"
@@ -105,6 +106,14 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			handlers: []func(c *fiber.Ctx) error{
 				middleware.Auth,
 				officerHandler.GetMe,
+			},
+		},
+
+		{
+			path:   "/cities",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				cities.Cities,
 			},
 		},
 	}
