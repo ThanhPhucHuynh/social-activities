@@ -48,7 +48,7 @@ func (h *Handler) RegisterHandler(c *fiber.Ctx) error {
 	var UserLogin types.Officer
 
 	if err := json.Unmarshal(c.Body(), &UserLogin); err != nil {
-		h.logger.Errorc(c.UserContext(), "Can't unmarshal body", err)
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body %v", err)
 		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
 	}
 
@@ -65,7 +65,7 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 	var UserLogin types.OfficerLogin
 
 	if err := json.Unmarshal(c.Body(), &UserLogin); err != nil {
-		h.logger.Errorc(c.UserContext(), "Can't unmarshal body", err)
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body %v", err)
 		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
 	}
 	user, err := h.srv.LoginSrv(c.UserContext(), UserLogin)

@@ -36,7 +36,7 @@ class API {
 
   get = (url: string): Promise<AxiosResponse<any, any>> => this.instance.get(url);
 
-  post = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
+  post = (url: string, payload: any): Promise<AxiosResponse<any, any>> =>
     this.instance.post(`${url}`, payload);
 
   patch = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>

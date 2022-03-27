@@ -31,11 +31,13 @@ type OfficerInToken struct {
 }
 
 type UserResponseSignUp struct {
-	ID    primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	Name  string             `json:"name"`
-	Email string             `json:"email"`
-	Code  string             `json:"code"`
-	Token string             `json:"token"`
+	ID     primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Name   string             `json:"name"`
+	Email  string             `json:"email"`
+	Code   string             `json:"code"`
+	Avatar string             `json:"avatar" bson:"avatar"` // arr path media
+	Role   string             `json:"role" bson:"role"`
+	Token  string             `json:"token"`
 }
 
 type OfficerLogin struct {
