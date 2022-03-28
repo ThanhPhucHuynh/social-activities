@@ -72,7 +72,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	userService := userSrv.NewService(conns, &em, userRepo, userLogger)
 	userHandler := userHandler.New(conns, &em, userService, userLogger)
 
-	officerLogger := logger.WithField("package", "user")
+	officerLogger := logger.WithField("package", "officer")
 	officerService := officerSrv.NewService(conns, &em, officerRepo, officerLogger)
 	officerHandler := officerHandler.New(conns, &em, officerService, officerLogger)
 
