@@ -3,6 +3,9 @@ import { IOfficer } from '../redux/types/authI';
 const storeAuth = (a: IOfficer) => {
   localStorage.setItem('auth', JSON.stringify(a));
 };
+const clearAuth = () => {
+  localStorage.clear();
+};
 const getAuth = (): IOfficer | null => {
   const t = localStorage.getItem('auth');
   if (t) {
@@ -10,4 +13,4 @@ const getAuth = (): IOfficer | null => {
   }
   return null;
 };
-export { storeAuth, getAuth };
+export { storeAuth, getAuth, clearAuth };

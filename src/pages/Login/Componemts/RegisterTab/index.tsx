@@ -50,7 +50,7 @@ const Register = () => {
         setCitys(res.data);
       })
       .catch((err) => message.error("can't get cities"));
-  });
+  }, []);
 
   return (
     <Box height={height * 0.8} style={{ padding: 0 }}>

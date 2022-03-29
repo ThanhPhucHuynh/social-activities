@@ -9,10 +9,13 @@ import useHook from './Hook';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 
+import { Header } from '../../components';
+import { IOfficer } from '../../redux/types/authI';
+
 export declare type RangeValue<DateType> = [EventValue<DateType>, EventValue<DateType>] | null;
 export declare type EventValue<DateType> = DateType | null;
 
-function Home(): React.ReactElement {
+function Home({ officer }: { officer: IOfficer }): React.ReactElement {
   const { RangePicker, onChange, onOk, data, setData } = useHook();
 
   React.useEffect(() => {
@@ -30,6 +33,7 @@ function Home(): React.ReactElement {
 
   return (
     <div className="App">
+      {/* <Header officer={officer} /> */}
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <Box width={300}>

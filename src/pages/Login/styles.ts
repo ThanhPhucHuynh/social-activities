@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { Grid, Paper } from '@mui/material';
+import { Grid, Paper, GridProps, PaperProps } from '@mui/material';
 import Background from '../../assets/images/login.jpg';
 
 type I = { [key in 'TextHeadersS' | 'Lotte']: React.CSSProperties | undefined };
@@ -16,7 +16,7 @@ const styleS: I = {
   },
 };
 
-const GridS = styled(Grid)(({ theme }: any) => ({
+const GridS = styled(Grid)<GridProps>(({ theme }) => ({
   '@keyframes pulsate': {
     '0%': {
       backgroundPosition: '0% 0%',
@@ -43,7 +43,7 @@ const GridS = styled(Grid)(({ theme }: any) => ({
   ...theme.typography.body2,
 }));
 
-const Item = styled(Paper)(({ theme }: any) => ({
+const Item = styled(Paper)<PaperProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(1),

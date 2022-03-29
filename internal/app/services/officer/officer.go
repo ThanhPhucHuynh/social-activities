@@ -90,7 +90,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Email:  officer.Email,
 		Code:   officer.Code,
 		Avatar: officer.Avatar,
-		Role:   officer.Code,
+		Role:   officer.Role,
 		Token:  tokenString}, nil
 
 }
@@ -126,7 +126,7 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 		ID:     user.ID,
 		Code:   user.Code,
 		Avatar: user.Avatar,
-		Role:   user.Code,
+		Role:   user.Role,
 		Token:  tokenString}, nil
 }
 

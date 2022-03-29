@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Paper, Box, Tabs, Tab } from '@mui/material';
+import { Grid, Box, Tabs, Tab } from '@mui/material';
 import { TabPanel } from '../../components/index';
 import Lottie from 'react-lottie';
 import * as animationRegister from '../../assets/lottie/21630-registrar.json';
@@ -15,7 +15,7 @@ export const LoginPage = () => {
   };
   return (
     <Box sx={{ width: '100%', flexGrow: 1, height: '100%' }}>
-      <Grid container style={{ flex: 1 }}>
+      <Grid container columns={{ xs: 4, sm: 8, md: 12 }} style={{ flex: 1 }}>
         <GridS item xs={8} alignItems="center" justifyContent="center">
           <Item style={{ padding: '10%', backgroundColor: 'transparent' }}>
             <Box>
