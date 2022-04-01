@@ -20,6 +20,10 @@ import (
 	officerHandler "social-activities/internal/app/handlers/officer"
 	officerRepository "social-activities/internal/app/repositories/officer"
 	officerSrv "social-activities/internal/app/services/officer"
+
+	mediaHandler "social-activities/internal/app/handlers/media"
+	mediaRepository "social-activities/internal/app/repositories/media"
+	mediaSrv "social-activities/internal/app/services/media"
 )
 
 const (
@@ -55,6 +59,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 
 	var userRepo userSrv.Repository
 	var officerRepo officerSrv.Repository
+	var mediaRepo mediaSrv.Repository
 
 	switch conns.Database.Type {
 	case db.TypeMongoDB:
@@ -64,6 +69,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 		}
 		userRepo = userRepository.NewMongoRepository(s)
 		officerRepo = officerRepository.NewMongoRepository(s)
+		mediaRepo = mediaRepository.NewMongoRepository(s)
 	default:
 		panic("database type not supported: " + conns.Database.Type)
 	}
@@ -75,6 +81,10 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	officerLogger := logger.WithField("package", "officer")
 	officerService := officerSrv.NewService(conns, &em, officerRepo, officerLogger)
 	officerHandler := officerHandler.New(conns, &em, officerService, officerLogger)
+
+	mediaLogger := logger.WithField("package", "media")
+	mediaService := mediaSrv.NewService(conns, &em, mediaRepo, mediaLogger)
+	mediaHandler := mediaHandler.New(conns, &em, mediaService, mediaLogger)
 
 	middleware := middleware.New(conns, &em)
 
@@ -114,6 +124,28 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			method: get,
 			handlers: []func(c *fiber.Ctx) error{
 				cities.Cities,
+			},
+		},
+
+		{
+			path:   "/media",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				mediaHandler.Upload,
+			},
+		},
+		{
+			path:   "/media/:uuid",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				mediaHandler.Asset,
+			},
+		},
+		{
+			path:   "/media/:uuid",
+			method: delete,
+			handlers: []func(c *fiber.Ctx) error{
+				mediaHandler.Destroy,
 			},
 		},
 	}

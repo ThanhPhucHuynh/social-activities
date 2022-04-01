@@ -8,10 +8,12 @@ http_server:
 database:
   type: mongodb
   mongo:
-    address: "tphuc:tphuc@cluster0.f6wcv.mongodb.net/social?retryWrites=true&w=majority"
+    address: ""
     timeout: 15s
     username: "tphuc"
     password: "tphuc"
     database: "social"
+cloudinary:
+  url: ""
 jwt:
   duration: 24h

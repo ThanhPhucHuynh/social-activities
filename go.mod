@@ -3,6 +3,7 @@ module social-activities
 go 1.17
 
 require (
+	github.com/cloudinary/cloudinary-go v1.7.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
@@ -18,8 +19,10 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/creasty/defaults v1.5.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
