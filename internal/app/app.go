@@ -24,6 +24,10 @@ import (
 	mediaHandler "social-activities/internal/app/handlers/media"
 	mediaRepository "social-activities/internal/app/repositories/media"
 	mediaSrv "social-activities/internal/app/services/media"
+
+	departmentHandler "social-activities/internal/app/handlers/department"
+	departmentRepository "social-activities/internal/app/repositories/department"
+	departmentSrv "social-activities/internal/app/services/department"
 )
 
 const (
@@ -51,15 +55,10 @@ type (
 func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	logger := glog.New()
 
-	// server := fiber.New(fiber.Config{
-	// 	// ErrorHandler: func(c *fiber.Ctx, err error) error {
-	// 	// 	return c.Status(200).SendString("Error handler")
-	// 	// },
-	// })
-
 	var userRepo userSrv.Repository
 	var officerRepo officerSrv.Repository
 	var mediaRepo mediaSrv.Repository
+	var departmentRepo departmentSrv.Repository
 
 	switch conns.Database.Type {
 	case db.TypeMongoDB:
@@ -70,6 +69,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 		userRepo = userRepository.NewMongoRepository(s)
 		officerRepo = officerRepository.NewMongoRepository(s)
 		mediaRepo = mediaRepository.NewMongoRepository(s)
+		departmentRepo = departmentRepository.NewMongoRepository(s)
 	default:
 		panic("database type not supported: " + conns.Database.Type)
 	}
@@ -85,6 +85,10 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	mediaLogger := logger.WithField("package", "media")
 	mediaService := mediaSrv.NewService(conns, &em, mediaRepo, mediaLogger)
 	mediaHandler := mediaHandler.New(conns, &em, mediaService, mediaLogger)
+
+	departmentLogger := logger.WithField("package", "department")
+	departmentServices := departmentSrv.NewService(conns, &em, departmentRepo, departmentLogger)
+	departmenthandler := departmentHandler.New(conns, &em, departmentServices, departmentLogger)
 
 	middleware := middleware.New(conns, &em)
 
@@ -146,6 +150,39 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			method: delete,
 			handlers: []func(c *fiber.Ctx) error{
 				mediaHandler.Destroy,
+			},
+		},
+
+		{
+			path:   "/department",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.Add,
+			},
+		},
+		{
+			path:   "/department",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.List,
+			},
+		},
+		{
+			path:   "/section",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.AddSection,
+			},
+		},
+		{
+			path:   "/section/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.ListSection,
 			},
 		},
 	}
