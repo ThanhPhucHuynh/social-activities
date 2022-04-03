@@ -13,7 +13,6 @@ const SectionA = ({ idDPM, nameDPM }: { idDPM: string; nameDPM: string }) => {
     setIsLoading(true);
     getSection({ idDPM: idDPM })
       .then((res) => {
-        console.log(res.data.reverse());
         if (res.data) {
           setData(res.data.reverse());
         }
