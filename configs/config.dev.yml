@@ -13,5 +13,7 @@ database:
     username: "tphuc"
     password: "tphuc"
     database: "social"
+cloudinary:
+  url: "cloudinary://844292466881975:futoF6yjg7beCGAPBxawGwVVQ58@dgyqcl1ef"
 jwt:
   duration: 24h

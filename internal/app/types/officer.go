@@ -12,7 +12,7 @@ type Officer struct {
 	Name     string             `json:"name" bson:"name" validate:"required"`
 	Email    string             `json:"email" bson:"email" validate:"email,required"`
 	Birthday time.Time          `json:"birthday" bson:"birthday" validate:"required"`
-	Password *string            `json:"password,omitempty" bson:"password"`
+	Password string             `json:"password,omitempty" bson:"password"`
 	Avatar   string             `json:"avatar" bson:"avatar"` // arr path media
 	Gender   string             `json:"gender" bson:"gender" validate:"required,max=60"`
 	Country  string             `json:"country" bson:"country" validate:"required,max=60"`

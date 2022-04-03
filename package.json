@@ -24,6 +24,7 @@
     "axios": "^0.26.1",
     "craco-less": "^1.6.0",
     "craco-less-fix": "^1.21.1",
+    "moment": "^2.29.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-lottie": "^1.2.3",
@@ -39,7 +40,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "set DISABLE_ESLINT_PLUGIN=true && craco build",
+    "build": "set DISABLE_ESLINT_PLUGIN=true && GENERATE_SOURCEMAP=false && craco build",
     "buildDeploy": "set DISABLE_ESLINT_PLUGIN=true && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
@@ -47,7 +48,7 @@
     "lint:fix": "eslint . --fix"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,md}": "eslint --cache --fix"
+    "*.{js,jsx,ts,tsx,css}": "eslint --cache --fix"
   },
   "eslintConfig": {
     "extends": [

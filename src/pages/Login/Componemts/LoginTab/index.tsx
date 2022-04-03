@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, Select, message } from 'antd';
 import { Box } from '@mui/material';
 import useWindowDimensions from '../../../../config/constants';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLoginRequest } from '../../../../redux/actions';
 import { RootState } from '../../../../redux/reducers/rootReducer';
-
+const { Option } = Select;
 const LoginTab = () => {
   const dispatch = useDispatch();
-  const { pending, officer } = useSelector((state: RootState) => state.auth);
+  const { pending, officer, error } = useSelector((state: RootState) => state.auth);
 
   const { height } = useWindowDimensions();
   const onFinish = (values: any) => {
@@ -21,7 +21,9 @@ const LoginTab = () => {
   const handleLogin = async (email: string, password: string) => {
     await dispatch(fetchLoginRequest({ email: email, password: password }));
     console.log(officer);
-
+    // if (error) {
+    //   message.error('Login failed');
+    // }
     if (officer) {
       history.go(0);
     }
@@ -68,7 +70,15 @@ const LoginTab = () => {
               name="email"
               rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <Input />
+              <Select>
+                {['tphuc@gmail.com', 'tphuc2@gmail.com', 'root@gmail.com'].map((e) => {
+                  return (
+                    <Option key={e} value={e} label={e}>
+                      {e}
+                    </Option>
+                  );
+                })}
+              </Select>
             </Form.Item>
 
             <Form.Item
@@ -76,7 +86,7 @@ const LoginTab = () => {
               name="password"
               rules={[{ required: true, message: 'Please input your password!' }]}
             >
-              <Input.Password />
+              <Input.Password defaultValue={'xxxx'} />
             </Form.Item>
 
             <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>

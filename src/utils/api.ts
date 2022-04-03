@@ -2,6 +2,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { ObjectType } from 'typescript';
 import { config } from '../config';
+import { getAuth } from '../services/auth';
 
 class API {
   private instance: AxiosInstance;
@@ -16,6 +17,12 @@ class API {
     instance.interceptors.request.use(
       async (conf) => {
         conf.baseURL = config.Host;
+        const auth = getAuth();
+        if (auth && conf.headers) {
+          conf.headers = {
+            Authorization: `Bearer ${auth.token}`,
+          };
+        }
         // todo something
         return conf;
       },
@@ -42,11 +49,11 @@ class API {
   patch = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
     this.instance.patch(`${url}`, payload);
 
-  put = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
-    this.instance.put(`${url}`, payload);
+  put = (url: string, data?: any): Promise<AxiosResponse<any, any>> =>
+    this.instance.put(`${url}`, data);
 
-  delete = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
-    this.instance.delete(`${url}`, { data: payload });
+  delete = (url: string, data?: any): Promise<AxiosResponse<any, any>> =>
+    this.instance.delete(`${url}`, data);
 
   upload = (url: string, formData: FormData): Promise<AxiosResponse<any, any>> =>
     this.instance.post(`${url}`, formData, {

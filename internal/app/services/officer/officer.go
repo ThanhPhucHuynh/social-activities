@@ -19,6 +19,9 @@ type Repository interface {
 	FindByCode(ctx context.Context, code string) (*types.Officer, error)
 	FindByEmail(ctx context.Context, email string) (*types.Officer, error)
 	Insert(ctx context.Context, user types.Officer) error
+	GetAll(ctx context.Context) ([]*types.Officer, error)
+	Update(ctx context.Context, user types.Officer) error
+	ResetPW(ctx context.Context, user types.Officer) error
 }
 
 // Service is an user service
@@ -45,11 +48,15 @@ func (s *Service) TestS(ctx context.Context) string {
 func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*types.UserResponseSignUp, error) {
 
 	if _, err := s.repo.FindByCode(ctx, userLogin.Code); err == nil {
+		s.logger.Errorf("Code  exits %v", err)
+		return nil, errors.Wrap(errors.New("Code exits"), "Code exits, can't insert user")
+	}
+	if _, err := s.repo.FindByEmail(ctx, userLogin.Email); err == nil {
 		s.logger.Errorf("Email email exits %v", err)
-		return nil, errors.Wrap(errors.New("Code exits"), "Email exits, can't insert user")
+		return nil, errors.Wrap(errors.New("Email exits"), "Email exits, can't insert user")
 	}
 
-	*userLogin.Password, _ = jwt.HashPassword(*userLogin.Password)
+	userLogin.Password, _ = jwt.HashPassword("xxxx")
 	officer := types.Officer{
 		ID:       primitive.NewObjectID(),
 		Name:     userLogin.Name,
@@ -58,7 +65,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Code:     userLogin.Code,
 		Birthday: time.Now(),
 		Avatar:   userLogin.Avatar,
-		Gender:   userLogin.Avatar,
+		Gender:   userLogin.Gender,
 		Country:  userLogin.Country,
 		Phone:    userLogin.Phone,
 		Salary:   0.0,
@@ -90,7 +97,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Email:  officer.Email,
 		Code:   officer.Code,
 		Avatar: officer.Avatar,
-		Role:   officer.Code,
+		Role:   officer.Role,
 		Token:  tokenString}, nil
 
 }
@@ -103,7 +110,7 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 		return nil, errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
 	}
 
-	if !jwt.IsCorrectPassword(userLogin.Password, *user.Password) {
+	if !jwt.IsCorrectPassword(userLogin.Password, user.Password) {
 		s.logger.Errorf("Password incorrect %v", userLogin.Email)
 		return nil, errors.Wrap(errors.New("Password isn't like password from database"), "Password incorrect")
 	}
@@ -126,7 +133,7 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 		ID:     user.ID,
 		Code:   user.Code,
 		Avatar: user.Avatar,
-		Role:   user.Code,
+		Role:   user.Role,
 		Token:  tokenString}, nil
 }
 
@@ -137,7 +144,54 @@ func (s *Service) MeSrv(ctx context.Context, email string) (*types.Officer, erro
 		s.logger.Errorf("Email email exits %v", err)
 		return nil, errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
 	}
-	user.Password = nil
+	user.Password = ""
 	s.logger.Infof("MeSrv completed ", user.Email)
 	return user, nil
+}
+
+func (s *Service) List(ctx context.Context) ([]*types.Officer, error) {
+
+	users, err := s.repo.GetAll(ctx)
+	if err != nil {
+		s.logger.Errorf("GetAll failed %v", err)
+		return nil, errors.Wrap(errors.New("GetAll failed"), "")
+	}
+	s.logger.Infof("get list completed ")
+	return users, nil
+}
+
+func (s *Service) ResetPW(ctx context.Context, email string) error {
+
+	user, err := s.repo.FindByEmail(ctx, email)
+	if err != nil {
+		s.logger.Errorf("Email email exits %v", err)
+		return errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
+	}
+	user.Password, _ = jwt.HashPassword("xxxx")
+	if err := s.repo.ResetPW(ctx, *user); err != nil {
+		s.logger.Errorf("can't reset pw %v", err)
+		return errors.Wrap(errors.New("can't reset pw"), "can't reset pw")
+	}
+	s.logger.Infof("reset completed ", user.Email)
+	return nil
+}
+
+func (s *Service) ChangePW(ctx context.Context, email string, pw string) error {
+	user, err := s.repo.FindByEmail(ctx, email)
+	if err != nil {
+		s.logger.Errorf("Email email exits %v", err)
+		return errors.Wrap(errors.New("Code exits"), "Email not exists, can't find officer")
+	}
+	p, _ := jwt.HashPassword(pw)
+
+	officer := types.Officer{
+		ID:       user.ID,
+		Password: p,
+		UpdateAt: time.Now()}
+	if err := s.repo.ResetPW(ctx, officer); err != nil {
+		s.logger.Errorf("can't change pw %v", err)
+		return errors.Wrap(errors.New("can't change pw"), "can't change pw")
+	}
+	s.logger.Infof("change pw completed ", user.Email)
+	return nil
 }

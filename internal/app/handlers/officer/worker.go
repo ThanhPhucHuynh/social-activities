@@ -20,6 +20,9 @@ type (
 		RegisterSrv(ctx context.Context, userLogin types.Officer) (*types.UserResponseSignUp, error)
 		LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*types.UserResponseSignUp, error)
 		MeSrv(ctx context.Context, email string) (*types.Officer, error)
+		List(ctx context.Context) ([]*types.Officer, error)
+		ChangePW(ctx context.Context, email string, pw string) error
+		ResetPW(ctx context.Context, email string) error
 	}
 
 	Handler struct {
@@ -85,4 +88,34 @@ func (h *Handler) GetMe(c *fiber.Ctx) error {
 
 	}
 	return respond.JSON(c, http.StatusOK, user)
+}
+func (h *Handler) GetList(c *fiber.Ctx) error {
+	users, err := h.srv.List(c.UserContext())
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
+
+	}
+	return respond.JSON(c, http.StatusOK, users)
+}
+
+func (h *Handler) ChangePW(c *fiber.Ctx) error {
+	pw := struct {
+		Password string `json:"password"`
+	}{}
+	if err := json.Unmarshal(c.Body(), &pw); err != nil {
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body %v", err)
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
+	}
+	u := c.Locals("officer").(types.Claims)
+	if err := h.srv.ChangePW(c.UserContext(), u.Email, pw.Password); err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
+	}
+	return respond.JSON(c, http.StatusOK, h.em.Success)
+}
+
+func (h *Handler) ResetPW(c *fiber.Ctx) error {
+	if err := h.srv.ResetPW(c.UserContext(), c.Params("email")); err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
+	}
+	return respond.JSON(c, http.StatusOK, h.em.Success)
 }

@@ -4,6 +4,7 @@ import api from '../../../utils/api';
 import { fetchLoginFailure, fetchLoginSuccess } from '../../actions';
 import { LoginTypes } from '../../ActionTypes/authType';
 import { FetchLoginRequest, FetchLoginRequestPayload, IOfficer } from '../../types/authI';
+import { message } from 'antd';
 
 const getLogin = (P: FetchLoginRequestPayload) =>
   api.post('/login', {
@@ -20,6 +21,7 @@ function* fetchLoginSaga(P: FetchLoginRequest) {
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
+    message.error('Login failed');
     yield put(
       fetchLoginFailure({
         error: e.message,

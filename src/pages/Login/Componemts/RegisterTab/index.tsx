@@ -50,7 +50,7 @@ const Register = () => {
         setCitys(res.data);
       })
       .catch((err) => message.error("can't get cities"));
-  });
+  }, []);
 
   return (
     <Box height={height * 0.8} style={{ padding: 0 }}>
@@ -106,11 +106,7 @@ const Register = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
-            <Select
-              placeholder="Select a option and change input text above"
-              onChange={onGenderChange}
-              allowClear
-            >
+            <Select placeholder="Select gender" onChange={onGenderChange} allowClear>
               <Option value="male">male</Option>
               <Option value="female">female</Option>
               <Option value="other">other</Option>
