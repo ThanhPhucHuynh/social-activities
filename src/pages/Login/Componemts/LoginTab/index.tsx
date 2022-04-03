@@ -21,9 +21,9 @@ const LoginTab = () => {
   const handleLogin = async (email: string, password: string) => {
     await dispatch(fetchLoginRequest({ email: email, password: password }));
     console.log(officer);
-    if (error) {
-      message.error('Login failed');
-    }
+    // if (error) {
+    //   message.error('Login failed');
+    // }
     if (officer) {
       history.go(0);
     }

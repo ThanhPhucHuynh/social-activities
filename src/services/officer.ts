@@ -27,5 +27,10 @@ export interface OfficerI {
 export const getOfficers = (): Promise<AxiosResponse<OfficerI[], any>> => {
   return api.get(`/officers`);
 };
-
+export const resetPW = (email: string): Promise<AxiosResponse<OfficerI[], any>> => {
+  return api.put(`/root/password/${email}`);
+};
+export const AddOfficer = (P: OfficerI): Promise<AxiosResponse<OfficerI[], any>> => {
+  return api.post(`/register`, P);
+};
 export {};

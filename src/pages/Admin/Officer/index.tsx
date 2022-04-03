@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Form, Select } from 'antd';
+import { Table, Input, Form, Select, message } from 'antd';
 import Hook from './hook';
-import { getOfficers } from '../../../services/officer';
+import { AddOfficer, getOfficers } from '../../../services/officer';
 import { Box } from '@mui/material';
 import { Button } from 'antd';
 import prompt from '../../../components/Prompt';
@@ -49,6 +49,13 @@ const OfficerA = () => {
                       <Input />
                     </Form.Item>
                     <Form.Item
+                      label="Code"
+                      name="code"
+                      rules={[{ required: true, message: 'Please input email' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
                       label="role"
                       name="role"
                       initialValue={'officer'}
@@ -66,7 +73,18 @@ const OfficerA = () => {
                     </Form.Item>
                   </React.Fragment>
                 ),
-                onOk: (ref, value, close, error) => {
+                onOk: (ref, value, close, finish, error) => {
+                  console.log(value);
+                  AddOfficer({ ...value })
+                    .then((res) => {
+                      message.info('Add completed');
+                      fetch();
+                      close();
+                    })
+                    .catch((err) => {
+                      message.error('Add failed!' + err.response.data.message);
+                      finish();
+                    });
                   // addDepartment({ name: value.name })
                   //   .then((res) => {
                   //     console.log(res);

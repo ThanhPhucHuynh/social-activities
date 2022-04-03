@@ -1,7 +1,7 @@
 import { Popconfirm, message, Input, Form, Tag, Space, Tooltip, Avatar, Button } from 'antd';
 import React from 'react';
 import prompt from '../../../components/Prompt';
-import { OfficerI } from '../../../services/officer';
+import { OfficerI, resetPW } from '../../../services/officer';
 
 const Reset = ({ record }: { record: OfficerI }) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -13,10 +13,14 @@ const Reset = ({ record }: { record: OfficerI }) => {
         title={'confirm reset password'}
         onConfirm={() => {
           setIsLoading(true);
-          setTimeout(() => {
-            setIsLoading(false);
-            message.info('Clicked on Yes.');
-          }, 3000);
+          resetPW(record.email)
+            .then(() => {
+              message.success('reset pw completed!');
+            })
+            .catch(() => {
+              message.error('reset pw failed');
+            })
+            .finally(() => setIsLoading(false));
         }}
         okText="Yes"
         cancelText="No"

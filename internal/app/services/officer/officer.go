@@ -48,8 +48,12 @@ func (s *Service) TestS(ctx context.Context) string {
 func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*types.UserResponseSignUp, error) {
 
 	if _, err := s.repo.FindByCode(ctx, userLogin.Code); err == nil {
+		s.logger.Errorf("Code  exits %v", err)
+		return nil, errors.Wrap(errors.New("Code exits"), "Code exits, can't insert user")
+	}
+	if _, err := s.repo.FindByEmail(ctx, userLogin.Email); err == nil {
 		s.logger.Errorf("Email email exits %v", err)
-		return nil, errors.Wrap(errors.New("Code exits"), "Email exits, can't insert user")
+		return nil, errors.Wrap(errors.New("Email exits"), "Email exits, can't insert user")
 	}
 
 	userLogin.Password, _ = jwt.HashPassword(userLogin.Password)
@@ -61,7 +65,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Code:     userLogin.Code,
 		Birthday: time.Now(),
 		Avatar:   userLogin.Avatar,
-		Gender:   userLogin.Avatar,
+		Gender:   userLogin.Gender,
 		Country:  userLogin.Country,
 		Phone:    userLogin.Phone,
 		Salary:   0.0,
