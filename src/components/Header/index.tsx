@@ -7,22 +7,21 @@ import {
   Typography,
   Menu,
   Container,
-  Avatar,
-  Button,
   Tooltip,
   MenuItem,
+  Avatar,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Image } from 'antd';
+import { Image, Form, Input, message, Select } from 'antd';
 import { IOfficer } from '../../redux/types/authI';
 import { clearAuth } from '../../services/auth';
 import { useNavigate } from 'react-router-dom';
+import prompt from '../Prompt';
+import { getMe, OfficerI } from '../../services/officer';
+import { CI, getCities } from '../../services/citys';
+import UploadH from './upload';
 
-// const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-// const pagesRoot = ['Department', 'Officer'];
-// const pagesAdmin = ['Activities', 'Officer', 'Report', 'Explore'];
-// const pagesOfficer = ['Activities'];
-
+const { Option } = Select;
 const pages = {
   root: [
     {
@@ -77,7 +76,55 @@ const Header = ({ officer }: { officer: IOfficer }) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const [record, setRecord] = React.useState<OfficerI | null>(null);
+  const [cities, setCitys] = React.useState<CI[]>([]);
+  const fetch = () => {
+    getMe()
+      .then((res) => {
+        setRecord(res?.data);
+        console.log(res.data);
+      })
+      .catch((e) => {
+        message.error(e);
+      });
+  };
+
+  React.useEffect(() => {
+    fetch();
+    getCities()
+      .then((res) => {
+        setCitys(res.data);
+      })
+      .catch(() => message.error("can't get cities"));
+  }, []);
+
   const settingsA = [
+    {
+      Title: 'Profile',
+      onPress: () => {
+        handleCloseUserMenu();
+        if (record) {
+          prompt({
+            title: record._id,
+            renderItem: <UploadH cities={cities} officer={officer} record={record} />,
+            onOk: (ref, value, close, finish, error) => {
+              console.log(value);
+              const u: OfficerI = {
+                ...value,
+                avatar: value.avatar.file.response.url,
+                birthday: value.birthday.toISOString(),
+              };
+              console.log(u);
+              // close();
+              finish();
+            },
+            // renderError: () => {
+            //   finish();
+            // },
+          });
+        }
+      },
+    },
     {
       Title: 'Logout',
       onPress: () => {

@@ -70,6 +70,7 @@ function Prompt({
       );
     } catch (e) {
       //
+      setIsLoading(false);
     }
   };
   return (

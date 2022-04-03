@@ -52,8 +52,8 @@ class API {
   put = (url: string, data?: any): Promise<AxiosResponse<any, any>> =>
     this.instance.put(`${url}`, data);
 
-  delete = (url: string, payload: ObjectType): Promise<AxiosResponse<any, any>> =>
-    this.instance.delete(`${url}`, { data: payload });
+  delete = (url: string, data?: any): Promise<AxiosResponse<any, any>> =>
+    this.instance.delete(`${url}`, data);
 
   upload = (url: string, formData: FormData): Promise<AxiosResponse<any, any>> =>
     this.instance.post(`${url}`, formData, {
