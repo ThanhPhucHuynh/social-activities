@@ -56,7 +56,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		return nil, errors.Wrap(errors.New("Email exits"), "Email exits, can't insert user")
 	}
 
-	userLogin.Password, _ = jwt.HashPassword(userLogin.Password)
+	userLogin.Password, _ = jwt.HashPassword("xxxx")
 	officer := types.Officer{
 		ID:       primitive.NewObjectID(),
 		Name:     userLogin.Name,
