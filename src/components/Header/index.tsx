@@ -19,9 +19,43 @@ import { clearAuth } from '../../services/auth';
 import { useNavigate } from 'react-router-dom';
 
 // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+// const pagesRoot = ['Department', 'Officer'];
+// const pagesAdmin = ['Activities', 'Officer', 'Report', 'Explore'];
+// const pagesOfficer = ['Activities'];
 
-const pagesAdmin = ['Activities', 'Officer', 'Report', 'Explore'];
-const pagesOfficer = ['Activities'];
+const pages = {
+  root: [
+    {
+      name: 'Department',
+      path: '/root/department',
+    },
+    {
+      name: 'Officer',
+      path: '/root/officer',
+    },
+  ],
+  admin: [
+    {
+      name: 'Activities',
+      path: '/activities',
+    },
+    {
+      name: 'Officer',
+      path: '/officer',
+    },
+    {
+      name: 'Report',
+      path: '/report',
+    },
+    { name: 'Explore', path: '/explore' },
+  ],
+  officer: [
+    {
+      name: 'Activities',
+      path: '/activities',
+    },
+  ],
+};
 
 const Header = ({ officer }: { officer: IOfficer }) => {
   const navigate = useNavigate();
@@ -61,7 +95,7 @@ const Header = ({ officer }: { officer: IOfficer }) => {
           <Typography
             variant="h6"
             noWrap
-            component="image"
+            component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
             <Image
@@ -101,15 +135,15 @@ const Header = ({ officer }: { officer: IOfficer }) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {(officer.role === 'admin' ? pagesAdmin : pagesOfficer).map((page) => (
+              {pages[officer.role].map((p: { name: string; path: string }) => (
                 <MenuItem
-                  key={page}
+                  key={p.name}
                   onClick={() => {
-                    navigate(`/${page.toLowerCase()}`);
+                    navigate(`${p.path}`);
                   }}
                 >
                   <Typography textAlign="center" color={'black'}>
-                    {page}
+                    {p.name}
                   </Typography>
                 </MenuItem>
               ))}
@@ -118,24 +152,25 @@ const Header = ({ officer }: { officer: IOfficer }) => {
           <Typography
             variant="h6"
             noWrap
-            component="image"
+            component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
             <Image width={100} src={require('../../assets/images/logo.png')} />
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {(officer.role === 'admin' ? pagesAdmin : pagesOfficer).map((page) => (
-              <Button
-                key={page}
-                onClick={() => navigate(`/${page.toLowerCase()}`)}
-                sx={{ my: 2, display: 'block' }}
-                color="secondary"
+            {pages[officer.role].map((p: { name: string; path: string }) => (
+              <MenuItem
+                key={p.name}
+                onClick={() => {
+                  navigate(`${p.path}`);
+                }}
               >
-                {page}
-              </Button>
+                <Typography textAlign="center" color={'black'}>
+                  {p.name}
+                </Typography>
+              </MenuItem>
             ))}
           </Box>
-
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={officer?.name || 'Not login'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -59,9 +59,9 @@ export const LoginPage = () => {
               <TabPanel value={value} index={0}>
                 <LoginTab />
               </TabPanel>
-              <TabPanel value={value} index={1}>
+              {/* <TabPanel value={value} index={1}>
                 <RegisterTab />
-              </TabPanel>
+              </TabPanel> */}
             </Box>
           </Item>
         </Grid>

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, useRoutes } from 'react-router-dom';
 import { Header } from '../components';
 import { Activitie, Home, LoginPage, NotFound } from '../pages';
+import { DepartmentA, OfficerA } from '../pages/Admin';
+
 import Explore from '../pages/Explore';
 import Officer from '../pages/Officer';
 import Report from '../pages/Report';
@@ -38,6 +40,17 @@ const routeItems = (officer: IOfficer | null): RI[] =>
               {
                 path: '/explore',
                 element: <Explore />,
+              },
+            ]
+          : officer.role === 'root'
+          ? [
+              {
+                path: '/root/department',
+                element: <DepartmentA />,
+              },
+              {
+                path: '/root/officer',
+                element: <OfficerA />,
               },
             ]
           : []),

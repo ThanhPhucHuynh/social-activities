@@ -29,7 +29,7 @@ function Home({ officer }: { officer: IOfficer }): React.ReactElement {
       setData(res.data);
       return res;
     });
-  });
+  }, []);
 
   return (
     <div className="App">

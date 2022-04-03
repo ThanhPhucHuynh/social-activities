@@ -5,7 +5,7 @@ export interface IOfficer {
   name: string;
   email: string;
   code: string;
-  role?: string;
+  role: 'admin' | 'root' | 'officer';
   avatar: string;
   token: string;
 }
