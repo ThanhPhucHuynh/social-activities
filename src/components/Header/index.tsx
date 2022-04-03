@@ -89,7 +89,7 @@ const Header = ({ officer }: { officer: IOfficer }) => {
     },
   ];
   return (
-    <AppBar position="sticky" style={{ background: 'white' }}>
+    <AppBar position="sticky" style={{ background: 'white', zIndex: 0 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography

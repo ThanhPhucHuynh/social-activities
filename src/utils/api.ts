@@ -2,7 +2,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { ObjectType } from 'typescript';
 import { config } from '../config';
-import { getAuth, storeAuth } from '../services/auth';
+import { getAuth } from '../services/auth';
 
 class API {
   private instance: AxiosInstance;
@@ -18,8 +18,6 @@ class API {
       async (conf) => {
         conf.baseURL = config.Host;
         const auth = getAuth();
-        console.log(conf.headers === undefined, auth);
-
         if (auth && conf.headers) {
           conf.headers = {
             Authorization: `Bearer ${auth.token}`,

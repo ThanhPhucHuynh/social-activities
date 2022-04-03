@@ -79,18 +79,18 @@ func (r *MongoRepository) GetList(ctx context.Context) ([]*types.Department, err
 
 func (r *MongoRepository) FindByNameSection(ctx context.Context, name string) (*types.Section, error) {
 	var s *types.Section
-	err := r.collection().FindOne(ctx, bson.M{"name": name}).Decode(&s)
+	err := r.collectionSection().FindOne(ctx, bson.M{"name": name}).Decode(&s)
 	return s, err
 }
 
 func (r *MongoRepository) FindBySectionNameId(ctx context.Context, name string, id primitive.ObjectID) (*types.Section, error) {
 	var s *types.Section
-	err := r.collection().FindOne(ctx, bson.M{"name": name, "department_id": id}).Decode(&s)
+	err := r.collectionSection().FindOne(ctx, bson.M{"name": name, "department_id": id}).Decode(&s)
 	return s, err
 }
 
 func (r *MongoRepository) InsertSection(ctx context.Context, s types.Section) error {
-	_, err := r.collection().InsertOne(ctx, s)
+	_, err := r.collectionSection().InsertOne(ctx, s)
 	return err
 }
 
@@ -106,7 +106,7 @@ func (r *MongoRepository) GetListSection(ctx context.Context, idDPM string) ([]*
 	filter := bson.M{
 		"department_id": id,
 	}
-	cursor, err := r.collection().Find(ctx, filter, opts)
+	cursor, err := r.collectionSection().Find(ctx, filter, opts)
 	if err != nil {
 		return nil, err
 	}

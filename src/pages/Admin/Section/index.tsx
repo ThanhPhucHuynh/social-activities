@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Input, Form, message } from 'antd';
 import Hook from './hook';
-import { addDepartment, getDepartment } from '../../../services/department';
+import { getSection, getDepartment, addSection } from '../../../services/department';
 import { Box } from '@mui/material';
 import { Button } from 'antd';
 import prompt from '../../../components/Prompt';
-import SectionA from '../Section';
 
-const DepartmentA = () => {
+const SectionA = ({ idDPM, nameDPM }: { idDPM: string; nameDPM: string }) => {
   const { columns, data, setData } = Hook();
   const [isLoading, setIsLoading] = useState(false);
   const fetch = () => {
     setIsLoading(true);
-    getDepartment()
+    getSection({ idDPM: idDPM })
       .then((res) => {
-        setData(res.data.reverse());
+        console.log(res.data.reverse());
+        if (res.data) {
+          setData(res.data.reverse());
+        }
+        return;
       })
       .finally(() => setIsLoading(false));
   };
@@ -24,15 +27,23 @@ const DepartmentA = () => {
   }, []);
   return (
     <React.Fragment>
-      DepartmentA
-      <Box>
-        <Box display={'flex'}>
+      <Box display={'flex'} justifyContent={'flex-end'}>
+        <Box>
+          <Table
+            pagination={false}
+            loading={isLoading}
+            rowKey={(a) => (a ? a._id : (Math.random() + 1).toString(36).substring(7))}
+            columns={columns}
+            dataSource={data}
+          />
+        </Box>
+        <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
           <Button
             type="primary"
             style={{ marginRight: 10 }}
             onClick={() => {
               prompt({
-                title: 'Text',
+                title: 'Add section',
                 renderItem: (
                   <React.Fragment>
                     <Form.Item
@@ -45,7 +56,12 @@ const DepartmentA = () => {
                   </React.Fragment>
                 ),
                 onOk: (ref, value, close, error) => {
-                  addDepartment({ name: value.name })
+                  addSection({
+                    name: value.name,
+                    department_id: idDPM,
+                    department_name: nameDPM,
+                    _id: '',
+                  })
                     .then((res) => {
                       console.log(res);
                       message.info('Add completed');
@@ -60,7 +76,7 @@ const DepartmentA = () => {
               });
             }}
           >
-            Add Department
+            Add Section
           </Button>
           <Button
             type="primary"
@@ -74,19 +90,8 @@ const DepartmentA = () => {
             Reload
           </Button>
         </Box>
-        <Table
-          loading={isLoading}
-          rowKey={(a) => a._id}
-          columns={columns}
-          dataSource={data}
-          expandable={{
-            expandedRowRender: (record) => <SectionA idDPM={record._id} nameDPM={record.name} />,
-            // <p style={{ margin: 0 }}>{record.name}</p>,
-            rowExpandable: (record) => record.name !== 'Not Expandable',
-          }}
-        />
       </Box>
     </React.Fragment>
   );
 };
-export default DepartmentA;
+export default SectionA;
