@@ -121,6 +121,13 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 				middleware.Auth,
 				officerHandler.GetMe,
 			},
+		},{
+			path:   "/officers",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.GetList,
+			},
 		},
 
 		{

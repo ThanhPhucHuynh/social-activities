@@ -20,6 +20,7 @@ type (
 		RegisterSrv(ctx context.Context, userLogin types.Officer) (*types.UserResponseSignUp, error)
 		LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*types.UserResponseSignUp, error)
 		MeSrv(ctx context.Context, email string) (*types.Officer, error)
+		List(ctx context.Context) ([]*types.Officer, error) 
 	}
 
 	Handler struct {
@@ -85,4 +86,12 @@ func (h *Handler) GetMe(c *fiber.Ctx) error {
 
 	}
 	return respond.JSON(c, http.StatusOK, user)
+}
+func (h *Handler) GetList(c *fiber.Ctx) error {
+	users, err := h.srv.List(c.UserContext())
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
+
+	}
+	return respond.JSON(c, http.StatusOK, users)
 }

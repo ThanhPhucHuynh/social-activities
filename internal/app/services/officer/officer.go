@@ -19,6 +19,7 @@ type Repository interface {
 	FindByCode(ctx context.Context, code string) (*types.Officer, error)
 	FindByEmail(ctx context.Context, email string) (*types.Officer, error)
 	Insert(ctx context.Context, user types.Officer) error
+	GetAll(ctx context.Context) ([]*types.Officer, error)
 }
 
 // Service is an user service
@@ -140,4 +141,14 @@ func (s *Service) MeSrv(ctx context.Context, email string) (*types.Officer, erro
 	user.Password = nil
 	s.logger.Infof("MeSrv completed ", user.Email)
 	return user, nil
+}
+func (s *Service) List(ctx context.Context) ([]*types.Officer, error) {
+
+	users, err := s.repo.GetAll(ctx)
+	if err != nil {
+		s.logger.Errorf("GetAll failed %v", err)
+		return nil, errors.Wrap(errors.New("GetAll failed"), "")
+	}
+	s.logger.Infof("get list completed ")
+	return users, nil
 }

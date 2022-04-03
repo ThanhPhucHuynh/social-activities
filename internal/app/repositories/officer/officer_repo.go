@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -46,7 +47,20 @@ func (r *MongoRepository) FindByCode(ctx context.Context, code string) (*types.O
 	err := r.collection().FindOne(ctx, bson.M{"code": code}).Decode(&officer)
 	return officer, err
 }
+func (r *MongoRepository) GetAll(ctx context.Context) ([]*types.Officer, error) {
+	var result []*types.Officer
+	opts := options.Find()
+	filter := bson.M{}
+	cursor, err := r.collection().Find(ctx, filter, opts)
+	if err != nil {
+		return nil, err
+	}
 
+	if err = cursor.All(ctx, &result); err != nil {
+		return nil, err
+	}
+	return result, err
+}
 func (r *MongoRepository) FindByEmail(ctx context.Context, email string) (*types.Officer, error) {
 	var officer *types.Officer
 	err := r.collection().FindOne(ctx, bson.M{"email": email}).Decode(&officer)
