@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Form, Input, Button, Checkbox, Select } from 'antd';
+import { Form, Input, Button, Checkbox, Select, message } from 'antd';
 import { Box } from '@mui/material';
 import useWindowDimensions from '../../../../config/constants';
 
@@ -10,7 +10,7 @@ import { RootState } from '../../../../redux/reducers/rootReducer';
 const { Option } = Select;
 const LoginTab = () => {
   const dispatch = useDispatch();
-  const { pending, officer } = useSelector((state: RootState) => state.auth);
+  const { pending, officer, error } = useSelector((state: RootState) => state.auth);
 
   const { height } = useWindowDimensions();
   const onFinish = (values: any) => {
@@ -21,7 +21,9 @@ const LoginTab = () => {
   const handleLogin = async (email: string, password: string) => {
     await dispatch(fetchLoginRequest({ email: email, password: password }));
     console.log(officer);
-
+    if (error) {
+      message.error('Login failed');
+    }
     if (officer) {
       history.go(0);
     }

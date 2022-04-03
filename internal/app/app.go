@@ -121,7 +121,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 				middleware.Auth,
 				officerHandler.GetMe,
 			},
-		},{
+		}, {
 			path:   "/officers",
 			method: get,
 			handlers: []func(c *fiber.Ctx) error{
@@ -129,7 +129,22 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 				officerHandler.GetList,
 			},
 		},
-
+		{
+			path:   "/officers/password",
+			method: put,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.ChangePW,
+			},
+		},
+		{
+			path:   "/root/password/:email",
+			method: put,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.ResetPW,
+			},
+		},
 		{
 			path:   "/cities",
 			method: get,

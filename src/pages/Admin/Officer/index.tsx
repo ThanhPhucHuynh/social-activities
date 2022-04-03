@@ -1,6 +1,104 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { Table, Input, Form, Select } from 'antd';
+import Hook from './hook';
+import { getOfficers } from '../../../services/officer';
+import { Box } from '@mui/material';
+import { Button } from 'antd';
+import prompt from '../../../components/Prompt';
+const { Option } = Select;
 const OfficerA = () => {
-  return <React.Fragment>OfficerA</React.Fragment>;
+  const { columns, data, setData } = Hook();
+  const [isLoading, setIsLoading] = useState(false);
+  const fetch = () => {
+    setIsLoading(true);
+    getOfficers()
+      .then((res) => {
+        setData(res.data.reverse());
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
+  return (
+    <React.Fragment>
+      DepartmentA
+      <Box>
+        <Box display={'flex'}>
+          <Button
+            type="primary"
+            style={{ marginRight: 10 }}
+            onClick={() => {
+              prompt({
+                title: 'Text',
+                renderItem: (
+                  <React.Fragment>
+                    <Form.Item
+                      label="Name"
+                      name="name"
+                      rules={[{ required: true, message: 'Please input dpm' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label="Email"
+                      name="email"
+                      rules={[{ required: true, message: 'Please input email' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label="role"
+                      name="role"
+                      initialValue={'officer'}
+                      rules={[{ required: true, message: 'Please input email' }]}
+                    >
+                      <Select>
+                        {['root', 'admin', 'officer'].map((e) => {
+                          return (
+                            <Option key={e} value={e} label={e}>
+                              {e}
+                            </Option>
+                          );
+                        })}
+                      </Select>
+                    </Form.Item>
+                  </React.Fragment>
+                ),
+                onOk: (ref, value, close, error) => {
+                  // addDepartment({ name: value.name })
+                  //   .then((res) => {
+                  //     console.log(res);
+                  //     message.info('Add completed');
+                  //     fetch();
+                  //     close();
+                  //   })
+                  //   .catch((err) => {
+                  //     // error(err?.response?.data.message.toString());
+                  //     message.error('Add failed!' + err.response.data.message);
+                  //   });
+                },
+              });
+            }}
+          >
+            Add
+          </Button>
+          <Button
+            type="primary"
+            style={{
+              display: 'flex',
+            }}
+            onClick={() => {
+              fetch();
+            }}
+          >
+            Reload
+          </Button>
+        </Box>
+        <Table loading={isLoading} rowKey={(a) => a._id} columns={columns} dataSource={data} />
+      </Box>
+    </React.Fragment>
+  );
 };
 export default OfficerA;

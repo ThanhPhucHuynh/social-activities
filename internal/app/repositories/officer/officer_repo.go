@@ -3,6 +3,7 @@ package officerRepo
 import (
 	"context"
 	"social-activities/internal/app/types"
+	"time"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -69,6 +70,29 @@ func (r *MongoRepository) FindByEmail(ctx context.Context, email string) (*types
 
 func (r *MongoRepository) Insert(ctx context.Context, user types.Officer) error {
 	_, err := r.collection().InsertOne(ctx, user)
+	return err
+}
+
+func (r *MongoRepository) ResetPW(ctx context.Context, user types.Officer) error {
+	newPW := bson.M{"$set": bson.M{
+		"password":   user.Password,
+		"updated_at": time.Now(),
+	}}
+	_, err := r.collection().UpdateByID(ctx, user.ID, newPW)
+	return err
+}
+
+func (r *MongoRepository) Update(ctx context.Context, user types.Officer) error {
+	newPW := bson.M{"$set": bson.M{
+		"name":       user.Password,
+		"birthday":   user.Password,
+		"avatar":     user.Password,
+		"gender":     user.Password,
+		"country":    user.Password,
+		"phone":      user.Password,
+		"updated_at": time.Now(),
+	}}
+	_, err := r.collection().UpdateByID(ctx, user.ID, newPW)
 	return err
 }
 
