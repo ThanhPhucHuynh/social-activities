@@ -14,10 +14,10 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { Image, Form, Input, message, Select } from 'antd';
 import { IOfficer } from '../../redux/types/authI';
-import { clearAuth } from '../../services/auth';
+import { clearAuth, getAuth, storeAuth } from '../../services/auth';
 import { useNavigate } from 'react-router-dom';
 import prompt from '../Prompt';
-import { getMe, OfficerI } from '../../services/officer';
+import { getMe, OfficerI, updateOfficers } from '../../services/officer';
 import { CI, getCities } from '../../services/citys';
 import UploadH from './upload';
 
@@ -79,14 +79,26 @@ const Header = ({ officer }: { officer: IOfficer }) => {
   const [record, setRecord] = React.useState<OfficerI | null>(null);
   const [cities, setCitys] = React.useState<CI[]>([]);
   const fetch = () => {
-    getMe()
-      .then((res) => {
-        setRecord(res?.data);
-        console.log(res.data);
-      })
-      .catch((e) => {
-        message.error(e);
-      });
+    const a = getAuth();
+    if (a) {
+      getMe()
+        .then((res) => {
+          setRecord(res?.data);
+          console.log(res.data);
+          storeAuth({
+            _id: res.data._id,
+            avatar: res.data?.avatar,
+            code: res.data.code,
+            email: res.data.email,
+            name: res.data.name,
+            role: a?.role,
+            token: a?.token,
+          });
+        })
+        .catch((e) => {
+          message.error(e);
+        });
+    }
   };
 
   React.useEffect(() => {
@@ -114,8 +126,12 @@ const Header = ({ officer }: { officer: IOfficer }) => {
                 avatar: value.avatar.file.response.url,
                 birthday: value.birthday.toISOString(),
               };
+              updateOfficers(u).then(() => {
+                fetch();
+                close();
+                message.success('update completed');
+              });
               console.log(u);
-              // close();
               finish();
             },
             // renderError: () => {
