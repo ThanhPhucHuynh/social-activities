@@ -120,10 +120,9 @@ const Header = ({ officer }: { officer: IOfficer }) => {
             title: record._id,
             renderItem: <UploadH cities={cities} officer={officer} record={record} />,
             onOk: (ref, value, close, finish, error) => {
-              console.log(value);
               const u: OfficerI = {
                 ...value,
-                avatar: value.avatar.file.response.url,
+                avatar: value.avatar ? value.avatar.file.response.url : record.avatar,
                 birthday: value.birthday.toISOString(),
               };
               updateOfficers(u).then(() => {
@@ -131,7 +130,6 @@ const Header = ({ officer }: { officer: IOfficer }) => {
                 close();
                 message.success('update completed');
               });
-              console.log(u);
               finish();
             },
             // renderError: () => {
@@ -237,7 +235,7 @@ const Header = ({ officer }: { officer: IOfficer }) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={officer?.name || 'Not login'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={officer?.name || '?'} src={officer?.avatar} />
+                <Avatar alt={record?.name || '?'} src={record?.avatar} />
               </IconButton>
             </Tooltip>
             <Menu

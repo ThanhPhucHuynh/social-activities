@@ -23,7 +23,7 @@ import moment from 'moment';
 import { CI, getCities } from '../../services/citys';
 const { Option } = Select;
 const config = {
-  rules: [{ type: 'object' as const, required: true, message: 'Please select time!' }],
+  rules: [{ type: 'object' as const, message: 'Please select time!' }],
 };
 
 const UploadH = ({
@@ -76,7 +76,7 @@ const UploadH = ({
       <Form.Item
         label="Avatar"
         name="avatar"
-        rules={[{ required: true, message: 'Please input dpm' }]}
+        // rules={[{ message: 'Please input dpm' }]}
       >
         <Upload
           maxCount={1}
@@ -137,11 +137,13 @@ const UploadH = ({
           })}
         </Select>
       </Form.Item>
-      <Form.Item name="birthday" label="DatePicker" {...config}>
-        <DatePicker
-          defaultValue={moment(record.birthday, 'YYYY-MM-DD HH:mm')}
-          format={'DD/MM/YYYY'}
-        />
+      <Form.Item
+        name="birthday"
+        label="DatePicker"
+        initialValue={moment(record.birthday, 'YYYY-MM-DD HH:mm')}
+        {...config}
+      >
+        <DatePicker format={'DD/MM/YYYY'} />
       </Form.Item>
       <Form.Item
         label="phone"

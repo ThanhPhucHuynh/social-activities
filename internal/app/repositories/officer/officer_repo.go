@@ -84,7 +84,7 @@ func (r *MongoRepository) ResetPW(ctx context.Context, user types.Officer) error
 
 func (r *MongoRepository) Update(ctx context.Context, user types.Officer) error {
 	newPW := bson.M{"$set": bson.M{
-		"name":       user.Password,
+		"name":       user.Name,
 		"birthday":   user.Birthday,
 		"avatar":     user.Avatar,
 		"gender":     user.Gender,
