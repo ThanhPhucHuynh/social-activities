@@ -130,6 +130,14 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			},
 		},
 		{
+			path:   "/officer",
+			method: put,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.Update,
+			},
+		},
+		{
 			path:   "/officers/password",
 			method: put,
 			handlers: []func(c *fiber.Ctx) error{

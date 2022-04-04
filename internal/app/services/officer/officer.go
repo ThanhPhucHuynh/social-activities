@@ -195,3 +195,35 @@ func (s *Service) ChangePW(ctx context.Context, email string, pw string) error {
 	s.logger.Infof("change pw completed ", user.Email)
 	return nil
 }
+
+func (s *Service) UpdateSrv(ctx context.Context, u types.Officer) error {
+
+	user, err := s.repo.FindByEmail(ctx, u.Email)
+	if err != nil {
+		s.logger.Errorf("Email not exits %v", err)
+		return errors.Wrap(errors.New("Email exits"), "Email not exits, can't update user")
+	}
+
+	officer := types.Officer{
+		ID:       user.ID,
+		Name:     u.Name,
+		Email:    user.Email,
+		Password: user.Password,
+		Code:     user.Code,
+		Birthday: u.Birthday,
+		Avatar:   u.Avatar,
+		Gender:   u.Gender,
+		Country:  u.Country,
+		Phone:    u.Phone,
+		Salary:   0.0,
+		Role:     user.Role,
+	}
+
+	if err := s.repo.Update(ctx, officer); err != nil {
+		s.logger.Errorf("Can't update user %v", err)
+		return errors.Wrap(err, "Can't update user")
+	}
+	s.logger.Errorf("updated user %v", officer.Email)
+	return nil
+
+}
