@@ -28,6 +28,7 @@ type OfficerInToken struct {
 	Name  string             `json:"name"`
 	Code  string             `json:"code" bson:"code"`
 	Email string             `json:"email"`
+	Role  string             `json:"role" bson:"role"`
 }
 
 type UserResponseSignUp struct {

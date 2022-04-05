@@ -22,6 +22,7 @@ func GenToken(officer types.OfficerInToken, duration time.Duration) (string, err
 		Email: officer.Email,
 		Name:  officer.Name,
 		Code:  officer.Code,
+		Role:  officer.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(duration).Unix(),
 		},

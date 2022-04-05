@@ -69,7 +69,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Country:  userLogin.Country,
 		Phone:    userLogin.Phone,
 		Salary:   0.0,
-		Role:     "none",
+		Role:     "officer",
 		CreateAt: time.Now(),
 		UpdateAt: time.Now()}
 
@@ -83,6 +83,8 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		ID:    officer.ID,
 		Name:  officer.Name,
 		Email: officer.Email,
+		Code:  officer.Code,
+		Role:  officer.Role,
 	}, s.conf.Jwt.Duration)
 
 	if err != nil {
@@ -120,6 +122,7 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 		ID:    user.ID,
 		Name:  user.Name,
 		Code:  user.Code,
+		Role:  user.Role,
 		Email: user.Email}, s.conf.Jwt.Duration)
 
 	if error != nil {
