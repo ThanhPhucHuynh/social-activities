@@ -32,6 +32,10 @@ import (
 	activityHandler "social-activities/internal/app/handlers/activity"
 	activityRepository "social-activities/internal/app/repositories/activity"
 	activitySrv "social-activities/internal/app/services/activity"
+
+	registerHandler "social-activities/internal/app/handlers/register"
+	registerRepository "social-activities/internal/app/repositories/register"
+	registerSrv "social-activities/internal/app/services/register"
 )
 
 const (
@@ -64,6 +68,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	var mediaRepo mediaSrv.Repository
 	var departmentRepo departmentSrv.Repository
 	var activityRepo activitySrv.Repository
+	var registerRepo registerSrv.Repository
 
 	switch conns.Database.Type {
 	case db.TypeMongoDB:
@@ -76,6 +81,7 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 		mediaRepo = mediaRepository.NewMongoRepository(s)
 		departmentRepo = departmentRepository.NewMongoRepository(s)
 		activityRepo = activityRepository.NewMongoRepository(s)
+		registerRepo = registerRepository.NewMongoRepository(s)
 	default:
 		panic("database type not supported: " + conns.Database.Type)
 	}
@@ -99,6 +105,10 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	activityLogger := logger.WithField("api", "activity")
 	activityServices := activitySrv.NewService(conns, &em, activityRepo, activityLogger)
 	activityhandler := activityHandler.New(conns, &em, activityServices, activityLogger)
+
+	registerLogger := logger.WithField("api", "register")
+	registerServices := registerSrv.NewService(conns, &em, registerRepo, registerLogger)
+	registerhandler := registerHandler.New(conns, &em, registerServices, registerLogger)
 
 	middleware := middleware.New(conns, &em)
 
@@ -272,6 +282,24 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			handlers: []func(c *fiber.Ctx) error{
 				middleware.Auth,
 				activityhandler.GetListByIdOfficer,
+			},
+		},
+
+		//register
+		{
+			path:   "/activity/register",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.Add,
+			},
+		},
+		{
+			path:   "/register/all",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.List,
 			},
 		},
 	}
