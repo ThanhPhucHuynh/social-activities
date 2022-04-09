@@ -59,7 +59,7 @@ func (s *Service) AddSrv(ctx context.Context, A types.ActivityI, c types.Claims)
 		IsComplete:    false,
 		SectionID:     A.SectionID,
 		SectionName:   A.SectionName,
-		CreateByEmail: A.CreateByEmail,
+		CreateByEmail: c.Email,
 		CreateBy:      c.ID,
 		CreateAt:      time.Now(),
 	}

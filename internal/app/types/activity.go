@@ -36,7 +36,7 @@ type ActivityI struct {
 	SectionName   string             `json:"section_name" bson:"section_name"`
 	IsAccept      bool               `json:"isAccept" bson:"isAccept"`
 	CreateBy      primitive.ObjectID `json:"created_by" bson:"created_by"`
-	CreateByEmail primitive.ObjectID `json:"created_by_email" bson:"created_by_email"`
+	CreateByEmail string             `json:"created_by_email" bson:"created_by_email"`
 	CreateAt      time.Time          `json:"created_at" bson:"created_at"`
 	UpdateAt      time.Time          `json:"updated_at" bson:"updated_at"`
 }

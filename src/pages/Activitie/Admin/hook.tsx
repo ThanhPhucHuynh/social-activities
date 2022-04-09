@@ -1,6 +1,6 @@
-import { Table, Tag, Space } from 'antd';
 import React from 'react';
 import { ActivitiesI } from '../../../services/activites';
+import { Button } from 'antd';
 
 const Hook = () => {
   const [data, setData] = React.useState<ActivitiesI[]>([]);
@@ -22,9 +22,20 @@ const Hook = () => {
       key: 'description',
     },
     {
-      title: 'updated_at',
-      dataIndex: 'created_at',
-      key: 'updated_at',
+      title: 'date',
+      dataIndex: 'date',
+      key: 'date',
+      render: (text: any, record: any, index: any) => 'date',
+    },
+    {
+      title: 'Action',
+      dataIndex: '',
+      key: 'x',
+      render: (text: any, record: any, index: any) => (
+        <React.Fragment>
+          <Button>Add Department</Button>
+        </React.Fragment>
+      ),
     },
   ];
 
@@ -34,4 +45,5 @@ const Hook = () => {
     columns,
   };
 };
+
 export default Hook;
