@@ -31,17 +31,17 @@ const routes = {
 // const pagesAdmin = ['Activities', 'Officer', 'Report', 'Explore'];
 // const pagesOfficer = ['Activities'];
 
-const privateRoute = (): {
-  officerR: RI[];
-  adminR: RI[];
-} => ({
-  officerR: [
-    {
-      path: '/activities',
-      element: <Activitie />,
-    },
-  ],
-  adminR: [],
-});
+// const privateRoute = (): {
+//   officerR: RI[];
+//   adminR: RI[];
+// } => ({
+//   officerR: [
+//     {
+//       path: '/activities',
+//       element: <Activitie officer={officer} />,
+//     },
+//   ],
+//   adminR: [],
+// });
 
-export { routes, privateRoute };
+export { routes };

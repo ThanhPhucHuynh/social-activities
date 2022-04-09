@@ -48,19 +48,20 @@ func (s *Service) TestS(ctx context.Context) string {
 func (s *Service) AddSrv(ctx context.Context, A types.ActivityI, c types.Claims) (*types.ActivityI, error) {
 
 	act := types.ActivityI{
-		ID:          primitive.NewObjectID(),
-		Name:        A.Name,
-		Description: A.Description,
-		Date:        A.Date,
-		Picture:     A.Picture,
-		TTL:         A.TTL,
-		Location:    A.Location,
-		TimeR:       A.TimeR,
-		IsComplete:  false,
-		SectionID:   A.SectionID,
-		SectionName: A.Description,
-		CreateBy:    c.ID,
-		CreateAt:    time.Now(),
+		ID:            primitive.NewObjectID(),
+		Name:          A.Name,
+		Description:   A.Description,
+		Date:          A.Date,
+		Picture:       A.Picture,
+		TTL:           A.TTL,
+		Location:      A.Location,
+		TimeR:         A.TimeR,
+		IsComplete:    false,
+		SectionID:     A.SectionID,
+		SectionName:   A.Description,
+		CreateByEmail: A.CreateByEmail,
+		CreateBy:      c.ID,
+		CreateAt:      time.Now(),
 	}
 
 	act.IsAccept = true

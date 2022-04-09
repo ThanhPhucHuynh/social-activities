@@ -27,7 +27,7 @@ const routeItems = (officer: IOfficer | null): RI[] =>
           ? [
               {
                 path: '/activities',
-                element: <Activitie />,
+                element: <Activitie officer={officer} />,
               },
               {
                 path: '/officer',
@@ -56,7 +56,7 @@ const routeItems = (officer: IOfficer | null): RI[] =>
           : []),
         {
           path: '/activities',
-          element: <Activitie />,
+          element: <Activitie officer={officer} />,
         },
       ])
     : [

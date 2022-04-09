@@ -84,9 +84,10 @@ const LoginTab = () => {
             <Form.Item
               label="Password"
               name="password"
+              initialValue={'xxxx'}
               rules={[{ required: true, message: 'Please input your password!' }]}
             >
-              <Input.Password defaultValue={'xxxx'} />
+              <Input.Password />
             </Form.Item>
 
             <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
