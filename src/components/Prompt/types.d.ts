@@ -9,7 +9,7 @@ export interface Props {
   ref?: any;
   onPressEnter?: () => void;
   renderItem?: ReactNode;
-  formProps?: FormProps;
+  formProps?: FormProps<any>;
   form?: FormInstance;
 }
 export interface PromptConfig {
@@ -24,7 +24,7 @@ export interface PromptConfig {
     error: (mgs: string) => void
   ) => void;
   renderItem?: ReactNode;
-  formProps?: FormProps;
+  formProps?: FormProps<any>;
   renderError?: (mgs: string) => ReactNode;
 }
 export interface PromptProps extends Props {
@@ -40,7 +40,7 @@ export interface PromptProps extends Props {
   close: (value?: any) => void;
   afterClose?: () => void;
   renderItem?: ReactNode;
-  formProps?: FormProps;
+  formProps?: FormProps<any>;
   formRef?: (ref: FormInstance) => void;
   renderError?: (mgs: string) => ReactNode;
 }

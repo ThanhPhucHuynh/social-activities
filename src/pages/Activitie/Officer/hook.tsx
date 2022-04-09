@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { acceptActivities, ActivitiesI, getActivitiesAll } from '../../../services/activites';
-import { Button, message, Popconfirm, Tag } from 'antd';
+import { ActivitiesI, getActivitiesAll } from '../../../services/activites';
+import { Button, Popconfirm, Tag } from 'antd';
 import moment from 'moment';
 
 const Hook = () => {
@@ -69,48 +69,21 @@ const Hook = () => {
         if (!record.isAccept) {
           return (
             <React.Fragment>
-              <Popconfirm
-                placement="topRight"
-                title={'confirm'}
-                onConfirm={() => {
-                  setIsLoading(true);
-                  acceptActivities(record._id)
-                    .then(() => {
-                      message.success('acceptActivities completed!');
-                      fetch();
-                    })
-                    .catch(() => {
-                      message.error('acceptActivities failed');
-                    })
-                    .finally(() => setIsLoading(false));
-                  // setIsLoading(true);
-                  // resetPW(record.email)
-                  //   .then(() => {
-                  //     message.success('reset pw completed!');
-                  //   })
-                  //   .catch(() => {
-                  //     message.error('reset pw failed');
-                  //   })
-                  //   .finally(() => setIsLoading(false));
+              <Button
+                type="primary"
+                disabled
+                style={{
+                  display: 'flex',
                 }}
-                okText="Yes"
-                cancelText="No"
               >
-                <Button
-                  type="primary"
-                  style={{
-                    display: 'flex',
-                  }}
-                >
-                  Accept
-                </Button>
-              </Popconfirm>
+                Request by {record.created_by_email}
+              </Button>
             </React.Fragment>
           );
         }
         return (
           <React.Fragment>
-            <Button>Detail</Button>
+            <Button>Registers</Button>
           </React.Fragment>
         );
       },
