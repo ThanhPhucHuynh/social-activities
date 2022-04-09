@@ -12,19 +12,14 @@ const Hook = () => {
       render: (text: any, record: any, index: any) => index,
     },
     {
-      title: 'ID',
-      dataIndex: '_id',
-      key: '_id',
-    },
-    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'created_at',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      title: 'description',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
       title: 'updated_at',

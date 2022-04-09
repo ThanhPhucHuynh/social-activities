@@ -58,7 +58,7 @@ func (s *Service) AddSrv(ctx context.Context, A types.ActivityI, c types.Claims)
 		TimeR:         A.TimeR,
 		IsComplete:    false,
 		SectionID:     A.SectionID,
-		SectionName:   A.Description,
+		SectionName:   A.SectionName,
 		CreateByEmail: A.CreateByEmail,
 		CreateBy:      c.ID,
 		CreateAt:      time.Now(),
@@ -85,6 +85,9 @@ func (s *Service) ListAllSrv(ctx context.Context) ([]*types.ActivityI, error) {
 		return nil, errors.Wrap(err, "Can't get list act")
 	}
 	s.logger.Infof("get list act act %v")
+	if l == nil {
+		return []*types.ActivityI{}, nil
+	}
 	return l, nil
 }
 func (s *Service) GetNotAccept(ctx context.Context) ([]*types.ActivityI, error) {
@@ -94,6 +97,9 @@ func (s *Service) GetNotAccept(ctx context.Context) ([]*types.ActivityI, error) 
 		s.logger.Errorf("Can't get list act %v", err)
 		return nil, errors.Wrap(err, "Can't get list act")
 	}
+	if l == nil {
+		return []*types.ActivityI{}, nil
+	}
 	return l, nil
 }
 func (s *Service) GetByOfficerID(ctx context.Context, c types.Claims) ([]*types.ActivityI, error) {
@@ -102,6 +108,9 @@ func (s *Service) GetByOfficerID(ctx context.Context, c types.Claims) ([]*types.
 	if err != nil {
 		s.logger.Errorf("Can't get GetByOfficerID act %v", err)
 		return nil, errors.Wrap(err, "Can't get GetByOfficerID act")
+	}
+	if l == nil {
+		return []*types.ActivityI{}, nil
 	}
 	s.logger.Infof("GetByOfficerID act %v")
 	return l, nil
