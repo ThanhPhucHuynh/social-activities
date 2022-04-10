@@ -127,6 +127,22 @@ func (r *MongoRepository) Appcept(ctx context.Context, id primitive.ObjectID) er
 	return err
 }
 
+func (r *MongoRepository) IsComplete(ctx context.Context, id primitive.ObjectID) error {
+	newPW := bson.M{"$set": bson.M{
+		"is_complete": true,
+		"updated_at":  time.Now(),
+	}}
+	_, err := r.collection().UpdateByID(ctx, id, newPW)
+	return err
+}
+func (r *MongoRepository) Destroy(ctx context.Context, id primitive.ObjectID) error {
+	newPW := bson.M{"$set": bson.M{
+		"destroy":    true,
+		"updated_at": time.Now(),
+	}}
+	_, err := r.collection().UpdateByID(ctx, id, newPW)
+	return err
+}
 func (r *MongoRepository) collection() *mongo.Collection {
 	return r.client.Database("social").Collection("activity")
 }

@@ -37,6 +37,7 @@ type ActivityI struct {
 	IsAccept      bool               `json:"isAccept" bson:"isAccept"`
 	CreateBy      primitive.ObjectID `json:"created_by" bson:"created_by"`
 	CreateByEmail string             `json:"created_by_email" bson:"created_by_email"`
+	Destroy       bool               `json:"destroy" bson:"destroy"`
 	CreateAt      time.Time          `json:"created_at" bson:"created_at"`
 	UpdateAt      time.Time          `json:"updated_at" bson:"updated_at"`
 }

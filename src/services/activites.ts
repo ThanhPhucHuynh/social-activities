@@ -16,6 +16,7 @@ export interface ActivitiesI {
   created_at?: Date;
   updated_at?: Date;
   created_by_email?: string;
+  destroy?: boolean;
 }
 
 export const getActivitiesAll = (): Promise<AxiosResponse<ActivitiesI[], any>> => {
@@ -25,6 +26,11 @@ export const postActivities = (
   activity: ActivitiesI
 ): Promise<AxiosResponse<ActivitiesI[], any>> => {
   return api.post(`/activity`, activity);
+};
+export const updateActivities = (
+  activity: ActivitiesI
+): Promise<AxiosResponse<ActivitiesI[], any>> => {
+  return api.put(`/activity`, activity);
 };
 export const acceptActivities = (id: string): Promise<AxiosResponse<ActivitiesI[], any>> => {
   return api.patch(`/activity/acception`, {

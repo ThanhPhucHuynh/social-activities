@@ -22,6 +22,8 @@ type Repository interface {
 	Update(ctx context.Context, a types.ActivityI) error
 	GetByOfficerID(ctx context.Context, id primitive.ObjectID) ([]*types.ActivityI, error)
 	Appcept(ctx context.Context, id primitive.ObjectID) error
+	IsComplete(ctx context.Context, id primitive.ObjectID) error
+	Destroy(ctx context.Context, id primitive.ObjectID) error
 }
 
 // Service is an user service
@@ -61,6 +63,7 @@ func (s *Service) AddSrv(ctx context.Context, A types.ActivityI, c types.Claims)
 		SectionName:   A.SectionName,
 		CreateByEmail: c.Email,
 		CreateBy:      c.ID,
+		Destroy:       false,
 		CreateAt:      time.Now(),
 	}
 
@@ -125,7 +128,24 @@ func (s *Service) AppceptSrv(ctx context.Context, A types.ActivityI) error {
 	s.logger.Infof("Appcept act %v")
 	return nil
 }
+func (s *Service) CompleteSrv(ctx context.Context, A types.ActivityI) error {
 
+	if err := s.repo.IsComplete(ctx, A.ID); err != nil {
+		s.logger.Errorf("Can't get IsComplete act %v", err)
+		return errors.Wrap(err, "Can't get IsComplete act")
+	}
+	s.logger.Infof("IsComplete act %v")
+	return nil
+}
+func (s *Service) DestroySrv(ctx context.Context, A types.ActivityI) error {
+
+	if err := s.repo.Destroy(ctx, A.ID); err != nil {
+		s.logger.Errorf("Can't get DestroySrv act %v", err)
+		return errors.Wrap(err, "Can't get DestroySrv act")
+	}
+	s.logger.Infof("DestroySrv act %v")
+	return nil
+}
 func (s *Service) Update(ctx context.Context, A types.ActivityI) error {
 
 	act := types.ActivityI{
@@ -139,7 +159,7 @@ func (s *Service) Update(ctx context.Context, A types.ActivityI) error {
 		TimeR:       A.TimeR,
 		IsComplete:  false,
 		SectionID:   A.SectionID,
-		SectionName: A.Description,
+		SectionName: A.SectionName,
 		CreateAt:    time.Now(),
 	}
 

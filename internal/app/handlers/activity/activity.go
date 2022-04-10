@@ -24,6 +24,8 @@ type (
 		GetByOfficerID(ctx context.Context, c types.Claims) ([]*types.ActivityI, error)
 		AppceptSrv(ctx context.Context, A types.ActivityI) error
 		Update(ctx context.Context, A types.ActivityI) error
+		CompleteSrv(ctx context.Context, A types.ActivityI) error
+		DestroySrv(ctx context.Context, A types.ActivityI) error
 	}
 
 	Handler struct {
@@ -95,7 +97,34 @@ func (h *Handler) Accept(c *fiber.Ctx) error {
 
 	return respond.JSON(c, http.StatusOK, h.em.Success)
 }
+func (h *Handler) Complete(c *fiber.Ctx) error {
+	var a types.ActivityI
 
+	if err := json.Unmarshal(c.Body(), &a); err != nil {
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body %v", err)
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
+	}
+
+	if err := h.srv.CompleteSrv(c.UserContext(), a); err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, h.em.Success)
+}
+func (h *Handler) Destroy(c *fiber.Ctx) error {
+	var a types.ActivityI
+
+	if err := json.Unmarshal(c.Body(), &a); err != nil {
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body %v", err)
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
+	}
+
+	if err := h.srv.DestroySrv(c.UserContext(), a); err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, h.em.Success)
+}
 func (h *Handler) GetAll(c *fiber.Ctx) error {
 	l, err := h.srv.ListAllSrv(c.UserContext())
 	if err != nil {

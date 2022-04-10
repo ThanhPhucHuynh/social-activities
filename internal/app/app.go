@@ -261,6 +261,22 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			},
 		},
 		{
+			path:   "/activity/complete",
+			method: patch,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Complete,
+			},
+		},
+		{
+			path:   "/activity/destroy",
+			method: patch,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Destroy,
+			},
+		},
+		{
 			path:   "/activity/all",
 			method: get,
 			handlers: []func(c *fiber.Ctx) error{
