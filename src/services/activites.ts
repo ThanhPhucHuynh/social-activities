@@ -37,3 +37,13 @@ export const acceptActivities = (id: string): Promise<AxiosResponse<ActivitiesI[
     _id: id,
   });
 };
+export const destroyActivities = (id: string): Promise<AxiosResponse<ActivitiesI[], any>> => {
+  return api.patch(`/activity/destroy`, {
+    _id: id,
+  });
+};
+export const completeActivities = (id: string): Promise<AxiosResponse<ActivitiesI[], any>> => {
+  return api.patch(`/activity/complete`, {
+    _id: id,
+  });
+};

@@ -17,3 +17,12 @@ cloudinary:
   url: "cloudinary://844292466881975:futoF6yjg7beCGAPBxawGwVVQ58@dgyqcl1ef"
 jwt:
   duration: 24h
+  
+mail:
+  email: "activitiessocial66@gmail.com"
+  password: "conga99#"
+  smtp:
+    host_mail: "smtp.gmail.com"
+    port_mail: "587"
+  confirm_timeout: 120s
+  src_template: "internal/pkg/mail/template/index.html"

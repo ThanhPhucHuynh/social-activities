@@ -318,6 +318,46 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 				registerhandler.List,
 			},
 		},
+		{
+			path:   "/register/officer/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdOfficer,
+			},
+		},
+		{
+			path:   "/register/officer/info/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdOfficerInfo,
+			},
+		},
+		{
+			path:   "/register/activity/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdActivity,
+			},
+		},
+		{
+			path:   "/register/activity/info/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdActivityInfo,
+			},
+		},
+
+		{
+			path:   "/mail",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				userHandler.TestMail,
+			},
+		},
 	}
 
 	app := fiber.New()

@@ -24,6 +24,8 @@ type (
 		Appcept(ctx context.Context, c types.Claims, idAct string) error
 		IsComplete(ctx context.Context, idAct string) error
 		Rate(ctx context.Context, idAct string, rate int64) error
+		GetAllByIdOfficerInfo(ctx context.Context, idAct string) ([]*types.RegisterRespone, error)
+		GetAllByActivityIDInfo(ctx context.Context, idAct string) ([]*types.RegisterRespone, error)
 	}
 
 	Handler struct {
@@ -61,9 +63,48 @@ func (h *Handler) Add(c *fiber.Ctx) error {
 	}
 	return respond.JSON(c, http.StatusOK, department)
 }
+
 func (h *Handler) List(c *fiber.Ctx) error {
 
 	registers, err := h.srv.GetAll(c.UserContext())
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, registers)
+}
+
+func (h *Handler) GetListByIdOfficer(c *fiber.Ctx) error {
+
+	registers, err := h.srv.GetAllByIdOfficer(c.UserContext(), c.Params("id"))
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, registers)
+}
+
+func (h *Handler) GetListByIdOfficerInfo(c *fiber.Ctx) error {
+
+	registers, err := h.srv.GetAllByIdOfficerInfo(c.UserContext(), c.Params("id"))
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, registers)
+}
+func (h *Handler) GetListByIdActivity(c *fiber.Ctx) error {
+
+	registers, err := h.srv.GetAllByActivityID(c.UserContext(), c.Params("id"))
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, registers)
+}
+func (h *Handler) GetListByIdActivityInfo(c *fiber.Ctx) error {
+
+	registers, err := h.srv.GetAllByActivityIDInfo(c.UserContext(), c.Params("id"))
 	if err != nil {
 		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
 	}

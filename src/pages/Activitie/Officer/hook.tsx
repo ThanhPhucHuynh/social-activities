@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ActivitiesI, getActivitiesAll } from '../../../services/activites';
-import { Button, Popconfirm, Tag } from 'antd';
+import { Button, Typography, Tag } from 'antd';
 import moment from 'moment';
+const { Text, Link } = Typography;
 
 const Hook = () => {
   const [data, setData] = React.useState<ActivitiesI[]>([]);
@@ -30,6 +31,12 @@ const Hook = () => {
       title: 'Section',
       dataIndex: 'section_name',
       key: 'section_name',
+      render: (text: any, record: ActivitiesI, index: any) => (
+        <React.Fragment>
+          <p>{text}</p>
+          <Text type="secondary">by {record.created_by_email}</Text>
+        </React.Fragment>
+      ),
     },
     {
       title: 'description',
@@ -55,6 +62,16 @@ const Hook = () => {
       dataIndex: '',
       key: 'x',
       render: (text: any, record: ActivitiesI, index: any) => {
+        if (record.destroy) {
+          return <Tag color={'red'}>DESTROY</Tag>;
+        }
+        if (record.is_complete) {
+          return (
+            <React.Fragment>
+              <Tag color={'blue'}>COMPLETED</Tag>;
+            </React.Fragment>
+          );
+        }
         if (record.date) {
           const __startTime = moment(Date.now()).format();
           const __endTime = moment(new Date(record.date[1])).format();

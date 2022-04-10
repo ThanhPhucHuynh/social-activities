@@ -79,6 +79,64 @@ func (r *MongoRepository) GetAllByIdOfficer(ctx context.Context, idOfficer primi
 	return result, err
 }
 
+func (r *MongoRepository) GetAllByIdOfficerInfo(ctx context.Context, idOfficer primitive.ObjectID) ([]*types.RegisterRespone, error) {
+	var result []*types.RegisterRespone
+
+	query := []bson.M{
+		{
+			"$match": bson.M{
+				"officerId": idOfficer,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "officer",
+				"let":  bson.M{"officerId": "$officerId"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$eq": []string{"$_id", "$$officerId"},
+							},
+						},
+					},
+				},
+				"as": "officerInfo",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "activity",
+				"let":  bson.M{"activityId": "$activityId"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$eq": []string{"$_id", "$$activityId"},
+							},
+						},
+					},
+				},
+				"as": "activityInfo",
+			},
+		},
+		{"$addFields": bson.M{
+			"activityInfo": bson.M{"$last": "$activityInfo"},
+			"officerInfo":  bson.M{"$last": "$officerInfo"},
+		}},
+	}
+
+	cursor, err := r.collection().Aggregate(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = cursor.All(ctx, &result); err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
 func (r *MongoRepository) GetAll(ctx context.Context) ([]*types.Register, error) {
 	var result []*types.Register
 	opts := options.Find()
@@ -101,6 +159,64 @@ func (r *MongoRepository) GetAllByActivityID(ctx context.Context, ActivityID pri
 		"activityId": ActivityID,
 	}
 	cursor, err := r.collection().Find(ctx, filter, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = cursor.All(ctx, &result); err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
+func (r *MongoRepository) GetAllByActivityIDInfo(ctx context.Context, ActivityID primitive.ObjectID) ([]*types.RegisterRespone, error) {
+	var result []*types.RegisterRespone
+
+	query := []bson.M{
+		{
+			"$match": bson.M{
+				"officerId": ActivityID,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "officer",
+				"let":  bson.M{"officerId": "$officerId"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$eq": []string{"$_id", "$$officerId"},
+							},
+						},
+					},
+				},
+				"as": "officerInfo",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "activity",
+				"let":  bson.M{"activityId": "$activityId"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$eq": []string{"$_id", "$$activityId"},
+							},
+						},
+					},
+				},
+				"as": "activityInfo",
+			},
+		},
+		{"$addFields": bson.M{
+			"activityInfo": bson.M{"$last": "$activityInfo"},
+			"officerInfo":  bson.M{"$last": "$officerInfo"},
+		}},
+	}
+
+	cursor, err := r.collection().Aggregate(ctx, query)
 	if err != nil {
 		return nil, err
 	}

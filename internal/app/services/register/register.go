@@ -24,6 +24,8 @@ type Repository interface {
 	IsComplete(ctx context.Context, rgt types.Register) error
 	GetAll(ctx context.Context) ([]*types.Register, error)
 	FindExits(ctx context.Context, rgt types.Register) (*types.Register, error)
+	GetAllByIdOfficerInfo(ctx context.Context, idOfficer primitive.ObjectID) ([]*types.RegisterRespone, error)
+	GetAllByActivityIDInfo(ctx context.Context, ActivityID primitive.ObjectID) ([]*types.RegisterRespone, error)
 }
 
 // Service is an user service
@@ -89,9 +91,28 @@ func (s *Service) GetAllByActivityID(ctx context.Context, idAct string) ([]*type
 		return nil, errors.Wrap(err, "Can't get list Rgt")
 	}
 	s.logger.Infof("Complete GetAllByActivityID Rgt %v", err)
+	if l == nil {
+		return []*types.Register{}, nil
+	}
 	return l, nil
 }
+func (s *Service) GetAllByActivityIDInfo(ctx context.Context, idAct string) ([]*types.RegisterRespone, error) {
+	id, err := primitive.ObjectIDFromHex(idAct)
+	if err != nil {
+		return nil, err
+	}
+	l, err := s.repo.GetAllByActivityIDInfo(ctx, id)
+	if err != nil {
+		s.logger.Errorf("Can't get list Rgt %v", err)
+		return nil, errors.Wrap(err, "Can't get list Rgt")
+	}
+	s.logger.Infof("Complete GetAllByActivityIDInfo Rgt %v", err)
 
+	if l == nil {
+		return []*types.RegisterRespone{}, nil
+	}
+	return l, nil
+}
 func (s *Service) GetAllByIdOfficer(ctx context.Context, idAct string) ([]*types.Register, error) {
 	id, err := primitive.ObjectIDFromHex(idAct)
 	if err != nil {
@@ -103,9 +124,29 @@ func (s *Service) GetAllByIdOfficer(ctx context.Context, idAct string) ([]*types
 		return nil, errors.Wrap(err, "Can't get list Rgt")
 	}
 	s.logger.Infof("Complete GetAllByIdOfficer Rgt %v", err)
+
+	if l == nil {
+		return []*types.Register{}, nil
+	}
 	return l, nil
 }
+func (s *Service) GetAllByIdOfficerInfo(ctx context.Context, idAct string) ([]*types.RegisterRespone, error) {
+	id, err := primitive.ObjectIDFromHex(idAct)
+	if err != nil {
+		return nil, err
+	}
+	l, err := s.repo.GetAllByIdOfficerInfo(ctx, id)
+	if err != nil {
+		s.logger.Errorf("Can't get list Rgt %v", err)
+		return nil, errors.Wrap(err, "Can't get list Rgt")
+	}
+	s.logger.Infof("Complete GetAllByIdOfficerInfo Rgt %v", err)
 
+	if l == nil {
+		return []*types.RegisterRespone{}, nil
+	}
+	return l, nil
+}
 func (s *Service) Appcept(ctx context.Context, c types.Claims, idAct string) error {
 	id, err := primitive.ObjectIDFromHex(idAct)
 

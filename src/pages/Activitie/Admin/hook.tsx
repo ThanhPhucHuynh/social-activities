@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import {
   acceptActivities,
   ActivitiesI,
+  completeActivities,
+  destroyActivities,
   getActivitiesAll,
   updateActivities,
 } from '../../../services/activites';
-import { Button, Form, message, Popconfirm, Tag, Dropdown, Menu } from 'antd';
+import { Button, Form, message, Popconfirm, Tag, Dropdown, Menu, Typography } from 'antd';
 import moment from 'moment';
 import RenderItem from './renderItem';
 import prompt from '../../../components/Prompt';
 import RenderItemUpdate from './renderItemUpdate';
-
+const { Text, Link } = Typography;
 const Hook = () => {
   const [data, setData] = React.useState<ActivitiesI[]>([]);
   const [form] = Form.useForm();
@@ -33,6 +35,9 @@ const Hook = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      render: (text: any, record: ActivitiesI, index: any) => (
+        <Text type="secondary">by {record.created_by_email}</Text>
+      ),
     },
     {
       title: 'Section',
@@ -101,15 +106,6 @@ const Hook = () => {
                       message.error('acceptActivities failed');
                     })
                     .finally(() => setIsLoading(false));
-                  // setIsLoading(true);
-                  // resetPW(record.email)
-                  //   .then(() => {
-                  //     message.success('reset pw completed!');
-                  //   })
-                  //   .catch(() => {
-                  //     message.error('reset pw failed');
-                  //   })
-                  //   .finally(() => setIsLoading(false));
                 }}
                 okText="Yes"
                 cancelText="No"
@@ -138,14 +134,6 @@ const Hook = () => {
                         prompt({
                           title: 'Text',
                           renderItem: <RenderItemUpdate activity={record} />,
-                          // formProps: {
-                          //   // form: form,
-                          //   // onValuesChange: (changedValues: any, values: any) => {
-                          //   //   if (changedValues.department) {
-                          //   //     form.setFieldsValue({ section: undefined });
-                          //   //   }
-                          //   // },
-                          // },
                           onOk: (ref, value, close, finish, error) => {
                             const date: string[] = value.Date.map((D: Date) => D.toISOString());
                             const act: ActivitiesI = {
@@ -176,15 +164,16 @@ const Hook = () => {
                       placement="topRight"
                       title={'confirm destroy activity'}
                       onConfirm={() => {
-                        // setIsLoading(true);
-                        // resetPW(record.email)
-                        //   .then(() => {
-                        //     message.success('reset pw completed!');
-                        //   })
-                        //   .catch(() => {
-                        //     message.error('reset pw failed');
-                        //   })
-                        //   .finally(() => setIsLoading(false));
+                        setIsLoading(true);
+                        destroyActivities(record._id)
+                          .then(() => {
+                            message.success('destroyActivities ac completed!');
+                            fetch();
+                          })
+                          .catch(() => {
+                            message.error('destroyActivities ac failed');
+                          })
+                          .finally(() => setIsLoading(false));
                       }}
                       okText="Yes"
                       cancelText="No"
@@ -197,15 +186,16 @@ const Hook = () => {
                       placement="topRight"
                       title={'confirm complete activity'}
                       onConfirm={() => {
-                        // setIsLoading(true);
-                        // resetPW(record.email)
-                        //   .then(() => {
-                        //     message.success('reset pw completed!');
-                        //   })
-                        //   .catch(() => {
-                        //     message.error('reset pw failed');
-                        //   })
-                        //   .finally(() => setIsLoading(false));
+                        setIsLoading(true);
+                        completeActivities(record._id)
+                          .then(() => {
+                            message.success('completeActivities pw completed!');
+                            fetch();
+                          })
+                          .catch(() => {
+                            message.error('completeActivities pw failed');
+                          })
+                          .finally(() => setIsLoading(false));
                       }}
                       okText="Yes"
                       cancelText="No"
