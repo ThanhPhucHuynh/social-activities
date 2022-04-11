@@ -1,17 +1,98 @@
-import React, { useState } from 'react';
-import { ActivitiesI, getActivitiesAll, registerActivities } from '../../../services/activites';
-import { Button, Typography, Tag, Popconfirm, message } from 'antd';
+import React, { useRef, useState } from 'react';
+import {
+  ActivitiesI,
+  getActivitiesAll,
+  getActivitiesAllforOfficer,
+  registerActivities,
+} from '../../../services/activites';
+import { Button, Typography, Tag, Popconfirm, message, Input, Space, InputRef } from 'antd';
 import moment from 'moment';
 import { IOfficer } from '../../../redux/types/authI';
+import { SearchOutlined } from '@mui/icons-material';
+import Highlighter from 'react-highlight-words';
+
 const { Text, Link } = Typography;
 
 const Hook = ({ officer }: { officer: IOfficer }) => {
   const [data, setData] = React.useState<ActivitiesI[]>([]);
-
   const [isLoading, setIsLoading] = useState(false);
+
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef | null>(null);
+
+  const getColumnSearchProps = (dataIndex: any) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            size={'small'}
+          >
+            Search
+          </Button>
+          <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Reset
+          </Button>
+          {/* <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button> */}
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: any) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : '',
+    onFilterDropdownVisibleChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text: any) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+  const handleReset = (clearFilters: any) => {
+    clearFilters();
+    setSearchText('');
+  };
+  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
   const fetch = () => {
     setIsLoading(true);
-    getActivitiesAll()
+    getActivitiesAllforOfficer(officer._id)
       .then((res) => {
         setData(res.data.reverse());
       })
@@ -27,6 +108,7 @@ const Hook = ({ officer }: { officer: IOfficer }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      ...getColumnSearchProps('name'),
     },
     {
       title: 'Section',
@@ -44,6 +126,7 @@ const Hook = ({ officer }: { officer: IOfficer }) => {
       dataIndex: 'description',
       key: 'description',
       width: 400,
+      ...getColumnSearchProps('description'),
     },
     {
       title: 'date',
@@ -61,7 +144,25 @@ const Hook = ({ officer }: { officer: IOfficer }) => {
     {
       title: 'Action',
       dataIndex: '',
-      key: 'x',
+      filters: [
+        {
+          text: <span>Complete</span>,
+          value: 'Complete',
+        },
+        {
+          text: <span>registered</span>,
+          value: 'registered',
+        },
+      ],
+      onFilter: (value: any, record: ActivitiesI) => {
+        if (value == 'Complete') {
+          return record.is_complete == true;
+        }
+        if (value == 'registered') {
+          return record.isRegister == true;
+        }
+        return true;
+      },
       render: (text: any, record: ActivitiesI, index: any) => {
         if (record.destroy) {
           return <Tag color={'red'}>DESTROY</Tag>;
@@ -97,6 +198,19 @@ const Hook = ({ officer }: { officer: IOfficer }) => {
                 Request by {record.created_by_email}
               </Button>
             </React.Fragment>
+          );
+        }
+        if (record.isRegister) {
+          return (
+            <Button
+              type="primary"
+              style={{
+                display: 'flex',
+              }}
+              disabled
+            >
+              registered
+            </Button>
           );
         }
         return (

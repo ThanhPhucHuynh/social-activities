@@ -87,7 +87,7 @@ const ActivitiesOfficer = ({ officer }: { officer: IOfficer }) => {
             onClick={() => {
               prompt({
                 title: 'My Activity Register',
-                renderItem: <MyActivity />,
+                renderItem: <MyActivity officer={officer} />,
                 formProps: {
                   // form: form,
                   // onValuesChange: (changedValues: any, values: any) => {

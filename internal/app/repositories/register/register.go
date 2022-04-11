@@ -175,7 +175,7 @@ func (r *MongoRepository) GetAllByActivityIDInfo(ctx context.Context, ActivityID
 	query := []bson.M{
 		{
 			"$match": bson.M{
-				"officerId": ActivityID,
+				"activityId": ActivityID,
 			},
 		},
 		{
