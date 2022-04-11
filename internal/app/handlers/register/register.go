@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"social-activities/internal/app/types"
 	"social-activities/internal/pkg/config"
@@ -110,4 +111,16 @@ func (h *Handler) GetListByIdActivityInfo(c *fiber.Ctx) error {
 	}
 
 	return respond.JSON(c, http.StatusOK, registers)
+}
+func (h *Handler) Rate(c *fiber.Ctx) error {
+
+	r, _ := strconv.ParseInt(c.Params("rate"), 10, 64)
+
+	err := h.srv.Rate(c.UserContext(), c.Params("id"), r)
+	
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, h.em.Success)
 }
