@@ -88,3 +88,10 @@ export const getOfficerOfActivitiesAll = (
 ): Promise<AxiosResponse<RegisterActivitiesI[], any>> => {
   return api.get(`/register/activity/info/${id}`);
 };
+
+export const rateAPI = (
+  id: string,
+  n: number
+): Promise<AxiosResponse<RegisterActivitiesI[], any>> => {
+  return api.get(`/rate/${id}/${n}`);
+};
