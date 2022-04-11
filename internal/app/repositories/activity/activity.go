@@ -51,6 +51,15 @@ func (r *MongoRepository) FindByID(ctx context.Context, id primitive.ObjectID) (
 	return dpm, err
 }
 
+func (r *MongoRepository) FindExits(ctx context.Context, rgt types.Register) (*types.Register, error) {
+	var rgtF *types.Register
+	err := r.client.Database("social").Collection("register").FindOne(ctx, bson.M{
+		"activityId": rgt.ActivityID,
+		"officerId":  rgt.OfficerID,
+	}).Decode(&rgtF)
+	return rgtF, err
+}
+
 func (r *MongoRepository) GetAll(ctx context.Context) ([]*types.ActivityI, error) {
 	var result []*types.ActivityI
 	opts := options.Find()

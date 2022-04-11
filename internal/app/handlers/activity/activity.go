@@ -26,6 +26,7 @@ type (
 		Update(ctx context.Context, A types.ActivityI) error
 		CompleteSrv(ctx context.Context, A types.ActivityI) error
 		DestroySrv(ctx context.Context, A types.ActivityI) error
+		ListAllSrvIngone(ctx context.Context, idOfficer string) ([]*types.ActivityIResponeOfficer, error)
 	}
 
 	Handler struct {
@@ -127,6 +128,14 @@ func (h *Handler) Destroy(c *fiber.Ctx) error {
 }
 func (h *Handler) GetAll(c *fiber.Ctx) error {
 	l, err := h.srv.ListAllSrv(c.UserContext())
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
+	}
+	return respond.JSON(c, http.StatusOK, l)
+}
+
+func (h *Handler) GetAllListAllSrvIngone(c *fiber.Ctx) error {
+	l, err := h.srv.ListAllSrvIngone(c.UserContext(), c.Params("officerId"))
 	if err != nil {
 		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
 	}

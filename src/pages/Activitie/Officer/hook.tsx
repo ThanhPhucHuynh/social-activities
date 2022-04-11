@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ActivitiesI, getActivitiesAll } from '../../../services/activites';
-import { Button, Typography, Tag } from 'antd';
+import { ActivitiesI, getActivitiesAll, registerActivities } from '../../../services/activites';
+import { Button, Typography, Tag, Popconfirm, message } from 'antd';
 import moment from 'moment';
+import { IOfficer } from '../../../redux/types/authI';
 const { Text, Link } = Typography;
 
-const Hook = () => {
+const Hook = ({ officer }: { officer: IOfficer }) => {
   const [data, setData] = React.useState<ActivitiesI[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +101,34 @@ const Hook = () => {
         }
         return (
           <React.Fragment>
-            <Button>Registers</Button>
+            {/* <Button>Registers</Button> */}
+            <Popconfirm
+              placement="topRight"
+              title={'confirm'}
+              onConfirm={() => {
+                setIsLoading(true);
+                registerActivities(record._id, officer._id)
+                  .then(() => {
+                    message.success('registerActivities completed!');
+                    fetch();
+                  })
+                  .catch((e) => {
+                    message.error('failed: ' + e.response.data.message);
+                  })
+                  .finally(() => setIsLoading(false));
+              }}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                style={{
+                  display: 'flex',
+                }}
+              >
+                Registers
+              </Button>
+            </Popconfirm>
           </React.Fragment>
         );
       },

@@ -285,6 +285,14 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			},
 		},
 		{
+			path:   "/activity/all/:officerId",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.GetAllListAllSrvIngone,
+			},
+		},
+		{
 			path:   "/activity/list/:officerId",
 			method: get,
 			handlers: []func(c *fiber.Ctx) error{

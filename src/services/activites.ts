@@ -47,3 +47,13 @@ export const completeActivities = (id: string): Promise<AxiosResponse<Activities
     _id: id,
   });
 };
+
+export const registerActivities = (
+  activityId: string,
+  officerId: string
+): Promise<AxiosResponse<ActivitiesI[], any>> => {
+  return api.post(`/activity/register`, {
+    activityId: activityId,
+    officerId: officerId,
+  });
+};

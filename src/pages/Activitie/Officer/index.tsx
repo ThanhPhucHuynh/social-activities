@@ -7,6 +7,7 @@ import { ActivitiesI, getActivitiesAll, postActivities } from '../../../services
 import { getDepartment, getSection, SectionI } from '../../../services/department';
 import { DepartmentI } from '../../../services/officer';
 import Hook from './hook';
+import MyActivity from './myActivity';
 import RenderItem from './renderItem';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -14,7 +15,7 @@ const rangeConfig = {
   rules: [{ type: 'array' as const, required: true, message: 'Please select time!' }],
 };
 const ActivitiesOfficer = ({ officer }: { officer: IOfficer }) => {
-  const { columns, data, setData, fetch, isLoading, setIsLoading } = Hook();
+  const { columns, data, setData, fetch, isLoading, setIsLoading } = Hook({ officer: officer });
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const ActivitiesOfficer = ({ officer }: { officer: IOfficer }) => {
   return (
     <div>
       <Box>
-        <Box display={'flex'}>
+        <Box display={'inline-flex'} justifyItems="flex-end">
           <Button
             type="primary"
             style={{ marginRight: 10 }}
@@ -70,12 +71,57 @@ const ActivitiesOfficer = ({ officer }: { officer: IOfficer }) => {
             type="primary"
             style={{
               display: 'flex',
+              marginRight: 10,
             }}
             onClick={() => {
               fetch();
             }}
           >
             Reload
+          </Button>
+          <Button
+            type="primary"
+            style={{
+              display: 'flex',
+            }}
+            onClick={() => {
+              prompt({
+                title: 'My Activity Register',
+                renderItem: <MyActivity />,
+                formProps: {
+                  // form: form,
+                  // onValuesChange: (changedValues: any, values: any) => {
+                  //   if (changedValues.department) {
+                  //     form.setFieldsValue({ section: undefined });
+                  //   }
+                  // },
+                },
+                onOk: (ref, value, close, finish, error) => {
+                  // const sec: SectionI = JSON.parse(value.section);
+                  // const date: string[] = value.Date.map((D: Date) => D.toISOString());
+                  // const act: ActivitiesI = {
+                  //   name: value.name,
+                  //   description: value.description,
+                  //   location: value.location,
+                  //   section_id: sec._id,
+                  //   section_name: sec.name,
+                  //   picture: [],
+                  //   _id: '',
+                  //   date: date,
+                  // };
+                  // postActivities(act)
+                  //   .then((res) => {
+                  //     finish();
+                  //     fetch();
+                  //     message.info('ADD complete!');
+                  //   })
+                  //   .catch(() => message.error('failed!!'))
+                  //   .finally(() => close());
+                },
+              });
+            }}
+          >
+            My register
           </Button>
         </Box>
         <Table loading={isLoading} rowKey={(a) => a?._id} columns={columns} dataSource={data} />

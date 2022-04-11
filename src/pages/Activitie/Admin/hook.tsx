@@ -35,14 +35,17 @@ const Hook = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: any, record: ActivitiesI, index: any) => (
-        <Text type="secondary">by {record.created_by_email}</Text>
-      ),
     },
     {
       title: 'Section',
       dataIndex: 'section_name',
       key: 'section_name',
+      render: (text: any, record: ActivitiesI, index: any) => (
+        <React.Fragment>
+          <p>{text}</p>
+          <Text type="secondary">by {record.created_by_email}</Text>
+        </React.Fragment>
+      ),
     },
     {
       title: 'description',

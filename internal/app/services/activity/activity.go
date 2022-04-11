@@ -24,6 +24,8 @@ type Repository interface {
 	Appcept(ctx context.Context, id primitive.ObjectID) error
 	IsComplete(ctx context.Context, id primitive.ObjectID) error
 	Destroy(ctx context.Context, id primitive.ObjectID) error
+
+	FindExits(ctx context.Context, rgt types.Register) (*types.Register, error)
 }
 
 // Service is an user service
@@ -93,6 +95,61 @@ func (s *Service) ListAllSrv(ctx context.Context) ([]*types.ActivityI, error) {
 	}
 	return l, nil
 }
+
+func (s *Service) ListAllSrvIngone(ctx context.Context, idOfficer string) ([]*types.ActivityIResponeOfficer, error) {
+	id, err := primitive.ObjectIDFromHex(idOfficer)
+	if err != nil {
+		return nil, err
+	}
+	l, err := s.repo.GetAll(ctx)
+	if err != nil {
+		s.logger.Errorf("Can't get list act %v", err)
+		return nil, errors.Wrap(err, "Can't get list act")
+	}
+	s.logger.Infof("get list act act %v")
+	if l == nil {
+		return []*types.ActivityIResponeOfficer{}, nil
+	}
+
+	var ll []*types.ActivityIResponeOfficer
+
+	for _, v := range l {
+
+		b := false
+
+		_, err := s.repo.FindExits(ctx, types.Register{
+			ActivityID: v.ID,
+			OfficerID:  id,
+		})
+		if err == nil {
+			b = true
+		}
+
+		ll = append(ll, &types.ActivityIResponeOfficer{
+			ID:            v.ID,
+			Name:          v.Name,
+			Description:   v.Description,
+			Date:          v.Date,
+			Picture:       v.Picture,
+			TTL:           v.TTL,
+			Location:      v.Description,
+			TimeR:         v.TimeR,
+			IsComplete:    v.IsComplete,
+			SectionID:     v.SectionID,
+			SectionName:   v.SectionName,
+			IsAccept:      v.IsAccept,
+			IsRegister:    b,
+			CreateBy:      v.CreateBy,
+			CreateByEmail: v.CreateByEmail,
+			Destroy:       v.Destroy,
+			CreateAt:      v.CreateAt,
+			UpdateAt:      v.UpdateAt,
+		})
+	}
+
+	return ll, nil
+}
+
 func (s *Service) GetNotAccept(ctx context.Context) ([]*types.ActivityI, error) {
 
 	l, err := s.repo.GetNotAccept(ctx)
