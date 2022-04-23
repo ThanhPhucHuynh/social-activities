@@ -37,7 +37,7 @@ const RenderItem = () => {
       .finally(() => {
         return [];
       });
-    setSections(a);
+    setSections(a.filter((v) => v.disable == false));
   };
   return (
     <React.Fragment>
