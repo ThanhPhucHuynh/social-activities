@@ -228,11 +228,19 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			},
 		},
 		{
-			path:   "/section/:id",
+			path:   "/section",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.AddSection,
+			},
+		},
+		{
+			path:   "/section/disable/:id/:disable",
 			method: get,
 			handlers: []func(c *fiber.Ctx) error{
 				middleware.Auth,
-				departmenthandler.ListSection,
+				departmenthandler.Disable,
 			},
 		},
 		//activity

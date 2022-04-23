@@ -384,6 +384,50 @@ const Hook = () => {
                         Complete
                       </Button>
                     </Popconfirm>
+                    <Button
+                      type="default"
+                      style={{
+                        display: 'flex',
+                      }}
+                      onClick={() => {
+                        prompt({
+                          title: 'List Officer',
+                          renderItem: <MyOfficer activity={record} isComplete={false} />,
+                          formProps: {
+                            // form: form,
+                            // onValuesChange: (changedValues: any, values: any) => {
+                            //   if (changedValues.department) {
+                            //     form.setFieldsValue({ section: undefined });
+                            //   }
+                            // },
+                          },
+                          onOk: (ref, value, close, finish, error) => {
+                            // const sec: SectionI = JSON.parse(value.section);
+                            // const date: string[] = value.Date.map((D: Date) => D.toISOString());
+                            // const act: ActivitiesI = {
+                            //   name: value.name,
+                            //   description: value.description,
+                            //   location: value.location,
+                            //   section_id: sec._id,
+                            //   section_name: sec.name,
+                            //   picture: [],
+                            //   _id: '',
+                            //   date: date,
+                            // };
+                            // postActivities(act)
+                            //   .then((res) => {
+                            //     finish();
+                            //     fetch();
+                            //     message.info('ADD complete!');
+                            //   })
+                            //   .catch(() => message.error('failed!!'))
+                            //   .finally(() => close());
+                          },
+                        });
+                      }}
+                    >
+                      List
+                    </Button>
                   </Menu>
                 </React.Fragment>
               }

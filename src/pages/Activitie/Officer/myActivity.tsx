@@ -50,7 +50,7 @@ const MyActivity = ({ officer }: { officer: IOfficer }) => {
         if (record.activityInfo.is_complete) {
           return (
             <React.Fragment>
-              <Tag color={'blue'}>COMPLETED</Tag>;
+              <Tag color={'blue'}>COMPLETED</Tag>
               <Rate allowHalf disabled defaultValue={record.rate} />
             </React.Fragment>
           );

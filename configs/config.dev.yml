@@ -8,19 +8,19 @@ http_server:
 database:
   type: mongodb
   mongo:
-    address: ""
+    address: "tphuc:tphuc@cluster0.f6wcv.mongodb.net/social?retryWrites=true&w=majority"
     timeout: 15s
     username: "tphuc"
     password: "tphuc"
     database: "social"
 cloudinary:
-  url: ""
+  url: "cloudinary://844292466881975:futoF6yjg7beCGAPBxawGwVVQ58@dgyqcl1ef"
 jwt:
   duration: 24h
   
 mail:
-  email: ""
-  password: ""
+  email: "activitiessocial66@gmail.com"
+  password: "conga99#"
   smtp:
     host_mail: "smtp.gmail.com"
     port_mail: "587"

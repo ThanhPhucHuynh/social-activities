@@ -18,6 +18,7 @@ type Section struct {
 	Name           string             `json:"name" bson:"name" validate:"required"`
 	DepartmentID   primitive.ObjectID `json:"department_id" bson:"department_id"`
 	DepartmentName string             `json:"department_name" bson:"department_name"`
+	Disable        bool               `json:"disable" bson:"disable"`
 	CreateAt       time.Time          `json:"created_at" bson:"created_at"`
 	UpdateAt       time.Time          `json:"updated_at" bson:"updated_at"`
 }

@@ -117,6 +117,14 @@ func (r *MongoRepository) GetListSection(ctx context.Context, idDPM string) ([]*
 	return result, err
 }
 
+func (r *MongoRepository) Disable(ctx context.Context, idDMP primitive.ObjectID, disable bool) error {
+	newPW := bson.M{"$set": bson.M{
+		"disable": disable,
+	}}
+	_, err := r.collectionSection().UpdateByID(ctx, idDMP, newPW)
+	return err
+}
+
 func (r *MongoRepository) collection() *mongo.Collection {
 	return r.client.Database("social").Collection("department")
 }

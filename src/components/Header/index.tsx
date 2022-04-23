@@ -20,6 +20,7 @@ import prompt from '../Prompt';
 import { getMe, OfficerI, updateOfficers } from '../../services/officer';
 import { CI, getCities } from '../../services/citys';
 import UploadH from './upload';
+import api from '../../utils/api';
 
 const { Option } = Select;
 const pages = {
@@ -38,14 +39,14 @@ const pages = {
       name: 'Activities',
       path: '/activities',
     },
-    {
-      name: 'Officer',
-      path: '/officer',
-    },
-    {
-      name: 'Report',
-      path: '/report',
-    },
+    // {
+    //   name: 'Officer',
+    //   path: '/officer',
+    // },
+    // {
+    //   name: 'Report',
+    //   path: '/report',
+    // },
     { name: 'Explore', path: '/explore' },
   ],
   officer: [
@@ -137,6 +138,52 @@ const Header = ({ officer }: { officer: IOfficer }) => {
             // },
           });
         }
+      },
+    },
+    {
+      Title: 'Change password',
+      onPress: () => {
+        prompt({
+          title: 'Change password',
+          renderItem: (
+            <>
+              <Form.Item
+                label="Old password"
+                name="oldPassword"
+                rules={[{ required: true, message: 'Please input your username!' }]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="New password"
+                name="password"
+                rules={[{ required: true, message: 'Please input your username!' }]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </>
+          ),
+          onOk: (ref, value, close, finish, error) => {
+            api
+              .post('/login', {
+                email: officer.email,
+                password: value['oldPassword'],
+              })
+              .then(() => {
+                api
+                  .put('/officers/password', {
+                    password: value['password'],
+                  })
+                  .then(() => message.info('new password complete!'))
+                  .catch(() => message.error('renew password incorrect!!!'));
+              })
+              .catch(() => {
+                message.error('Old password incorrect!!!');
+              });
+            finish();
+            close();
+          },
+        });
       },
     },
     {

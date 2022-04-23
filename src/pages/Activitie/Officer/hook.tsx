@@ -43,17 +43,6 @@ const Hook = ({ officer }: { officer: IOfficer }) => {
           <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
             Reset
           </Button>
-          {/* <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
-          </Button> */}
         </Space>
       </div>
     ),
@@ -170,7 +159,7 @@ const Hook = ({ officer }: { officer: IOfficer }) => {
         if (record.is_complete) {
           return (
             <React.Fragment>
-              <Tag color={'blue'}>COMPLETED</Tag>;
+              <Tag color={'blue'}>COMPLETED</Tag>
             </React.Fragment>
           );
         }

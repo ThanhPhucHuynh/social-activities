@@ -11,8 +11,16 @@ import {
 } from '../../../services/activites';
 import { SearchOutlined } from '@mui/icons-material';
 import Highlighter from 'react-highlight-words';
+import prompt from '../../../components/Prompt';
+import api from '../../../utils/api';
 
-const MyOfficer = ({ activity }: { activity: ActivitiesI }) => {
+const MyOfficer = ({
+  activity,
+  isComplete = true,
+}: {
+  activity: ActivitiesI;
+  isComplete?: boolean;
+}) => {
   const [data, setData] = React.useState<RegisterActivitiesI[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -123,22 +131,85 @@ const MyOfficer = ({ activity }: { activity: ActivitiesI }) => {
       title: 'Rate',
       dataIndex: '',
       render: (text: any, record: RegisterActivitiesI, index: any) => {
+        if (isComplete) {
+          return (
+            <React.Fragment>
+              <Tag color={'blue'}>COMPLETED</Tag>
+              <Rate
+                //   allowHalf
+                onChange={(a) => {
+                  setIsLoading(true);
+                  rateAPI(record._id, a)
+                    .then(() => {
+                      message.success('Update rate completed');
+                    })
+                    .catch(() => message.error('Failed'))
+                    .finally(() => setIsLoading(false));
+                }}
+                defaultValue={record.rate}
+              />
+            </React.Fragment>
+          );
+        }
         return (
           <React.Fragment>
-            <Tag color={'blue'}>COMPLETED</Tag>
-            <Rate
-              //   allowHalf
-              onChange={(a) => {
-                setIsLoading(true);
-                rateAPI(record._id, a)
-                  .then(() => {
-                    message.success('Update rate completed');
-                  })
-                  .catch(() => message.error('Failed'))
-                  .finally(() => setIsLoading(false));
+            <Button
+              type="default"
+              style={{
+                display: 'flex',
               }}
-              defaultValue={record.rate}
-            />
+              onClick={() => {
+                prompt({
+                  title: 'Noti',
+                  renderItem: (
+                    <>
+                      <Form.Item
+                        label="Email"
+                        name="email"
+                        initialValue={record.officerInfo.email}
+                        rules={[{ required: true, message: 'Please input your username!' }]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="subject"
+                        name="subject"
+                        initialValue={'Email notification from sv'}
+                        rules={[{ required: true, message: 'Please input your username!' }]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="content"
+                        name="content"
+                        initialValue={'Vui Long moi sv den du'}
+                        rules={[{ required: true, message: 'Please input your username!' }]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </>
+                  ),
+                  onOk: (ref, value, close, finish, error) => {
+                    api
+                      .post('/mail', {
+                        emails: [value['email']],
+                        content: value['content'],
+                        subject: value['subject'],
+                      })
+                      .then(() => {
+                        message.success('send mail completed.');
+                        close();
+                      })
+                      .catch(() => {
+                        message.success('send mail failed.');
+                      })
+                      .finally(() => finish());
+                  },
+                });
+              }}
+            >
+              Send Mail
+            </Button>
           </React.Fragment>
         );
       },
