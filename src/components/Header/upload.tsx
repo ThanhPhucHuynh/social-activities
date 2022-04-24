@@ -139,7 +139,7 @@ const UploadH = ({
       </Form.Item>
       <Form.Item
         name="birthday"
-        label="DatePicker"
+        label="birthday"
         initialValue={moment(record.birthday, 'YYYY-MM-DD HH:mm')}
         {...config}
       >

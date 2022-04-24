@@ -36,24 +36,22 @@ function Home({ officer }: { officer: IOfficer }): React.ReactElement {
       {/* <Header officer={officer} /> */}
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <Box width={300}>
+        {/* <Box width={300}>
           <Slider size="small" defaultValue={70} aria-label="Small" valueLabelDisplay="auto" />
           <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
-        </Box>
+        </Box> */}
         <div>
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload. {data}
-          </p>
+          <p>Social activities</p>
         </div>
-        <a
+        {/* <a
           className="App-link"
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
           Learn React + {config.Host}
-        </a>
-        <Space direction="vertical" size={12}>
+        </a> */}
+        {/* <Space direction="vertical" size={12}>
           <DatePicker showTime onChange={onChange} onOk={onOk} />
           <RangePicker
             showTime={{ format: 'HH:mm' }}
@@ -61,10 +59,10 @@ function Home({ officer }: { officer: IOfficer }): React.ReactElement {
             onChange={onChange}
             onOk={onOk}
           />
-        </Space>
+        </Space> */}
       </header>
 
-      <Button type="primary">Button</Button>
+      {/* <Button type="primary">Button</Button> */}
     </div>
   );
 }
