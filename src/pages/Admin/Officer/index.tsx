@@ -85,17 +85,6 @@ const OfficerA = () => {
                       message.error('Add failed!' + err.response.data.message);
                       finish();
                     });
-                  // addDepartment({ name: value.name })
-                  //   .then((res) => {
-                  //     console.log(res);
-                  //     message.info('Add completed');
-                  //     fetch();
-                  //     close();
-                  //   })
-                  //   .catch((err) => {
-                  //     // error(err?.response?.data.message.toString());
-                  //     message.error('Add failed!' + err.response.data.message);
-                  //   });
                 },
               });
             }}

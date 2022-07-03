@@ -7,19 +7,7 @@ import { Button } from 'antd';
 import prompt from '../../../components/Prompt';
 
 const SectionA = ({ idDPM, nameDPM }: { idDPM: string; nameDPM: string }) => {
-  const { columns, data, setData } = Hook();
-  const [isLoading, setIsLoading] = useState(false);
-  const fetch = () => {
-    setIsLoading(true);
-    getSection({ idDPM: idDPM })
-      .then((res) => {
-        if (res.data) {
-          setData(res.data.reverse());
-        }
-        return;
-      })
-      .finally(() => setIsLoading(false));
-  };
+  const { columns, data, setData, fetch, isLoading, setIsLoading } = Hook(idDPM);
 
   useEffect(() => {
     fetch();

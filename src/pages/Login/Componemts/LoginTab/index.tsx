@@ -71,7 +71,7 @@ const LoginTab = () => {
               rules={[{ required: true, message: 'Please input your email!' }]}
             >
               <Select>
-                {['tphuc@gmail.com', 'tphuc2@gmail.com', 'root@gmail.com'].map((e) => {
+                {['phat@gmail.com', 'phat2@gmail.com', 'root@gmail.com'].map((e) => {
                   return (
                     <Option key={e} value={e} label={e}>
                       {e}
@@ -84,9 +84,10 @@ const LoginTab = () => {
             <Form.Item
               label="Password"
               name="password"
+              initialValue={'xxxx'}
               rules={[{ required: true, message: 'Please input your password!' }]}
             >
-              <Input.Password defaultValue={'xxxx'} />
+              <Input.Password />
             </Form.Item>
 
             <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>

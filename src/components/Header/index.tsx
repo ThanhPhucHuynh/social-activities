@@ -14,12 +14,13 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { Image, Form, Input, message, Select } from 'antd';
 import { IOfficer } from '../../redux/types/authI';
-import { clearAuth } from '../../services/auth';
+import { clearAuth, getAuth, storeAuth } from '../../services/auth';
 import { useNavigate } from 'react-router-dom';
 import prompt from '../Prompt';
-import { getMe, OfficerI } from '../../services/officer';
+import { getMe, OfficerI, updateOfficers } from '../../services/officer';
 import { CI, getCities } from '../../services/citys';
 import UploadH from './upload';
+import api from '../../utils/api';
 
 const { Option } = Select;
 const pages = {
@@ -38,14 +39,14 @@ const pages = {
       name: 'Activities',
       path: '/activities',
     },
-    {
-      name: 'Officer',
-      path: '/officer',
-    },
-    {
-      name: 'Report',
-      path: '/report',
-    },
+    // {
+    //   name: 'Officer',
+    //   path: '/officer',
+    // },
+    // {
+    //   name: 'Report',
+    //   path: '/report',
+    // },
     { name: 'Explore', path: '/explore' },
   ],
   officer: [
@@ -79,14 +80,26 @@ const Header = ({ officer }: { officer: IOfficer }) => {
   const [record, setRecord] = React.useState<OfficerI | null>(null);
   const [cities, setCitys] = React.useState<CI[]>([]);
   const fetch = () => {
-    getMe()
-      .then((res) => {
-        setRecord(res?.data);
-        console.log(res.data);
-      })
-      .catch((e) => {
-        message.error(e);
-      });
+    const a = getAuth();
+    if (a) {
+      getMe()
+        .then((res) => {
+          setRecord(res?.data);
+          console.log(res.data);
+          storeAuth({
+            _id: res.data._id,
+            avatar: res.data?.avatar,
+            code: res.data.code,
+            email: res.data.email,
+            name: res.data.name,
+            role: a?.role,
+            token: a?.token,
+          });
+        })
+        .catch((e) => {
+          message.error(e);
+        });
+    }
   };
 
   React.useEffect(() => {
@@ -108,14 +121,16 @@ const Header = ({ officer }: { officer: IOfficer }) => {
             title: record._id,
             renderItem: <UploadH cities={cities} officer={officer} record={record} />,
             onOk: (ref, value, close, finish, error) => {
-              console.log(value);
               const u: OfficerI = {
                 ...value,
-                avatar: value.avatar.file.response.url,
+                avatar: value.avatar ? value.avatar.file.response.url : record.avatar,
                 birthday: value.birthday.toISOString(),
               };
-              console.log(u);
-              // close();
+              updateOfficers(u).then(() => {
+                fetch();
+                close();
+                message.success('update completed');
+              });
               finish();
             },
             // renderError: () => {
@@ -123,6 +138,52 @@ const Header = ({ officer }: { officer: IOfficer }) => {
             // },
           });
         }
+      },
+    },
+    {
+      Title: 'Change password',
+      onPress: () => {
+        prompt({
+          title: 'Change password',
+          renderItem: (
+            <>
+              <Form.Item
+                label="Old password"
+                name="oldPassword"
+                rules={[{ required: true, message: 'Please input your username!' }]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="New password"
+                name="password"
+                rules={[{ required: true, message: 'Please input your username!' }]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </>
+          ),
+          onOk: (ref, value, close, finish, error) => {
+            api
+              .post('/login', {
+                email: officer.email,
+                password: value['oldPassword'],
+              })
+              .then(() => {
+                api
+                  .put('/officers/password', {
+                    password: value['password'],
+                  })
+                  .then(() => message.info('new password complete!'))
+                  .catch(() => message.error('renew password incorrect!!!'));
+              })
+              .catch(() => {
+                message.error('Old password incorrect!!!');
+              });
+            finish();
+            close();
+          },
+        });
       },
     },
     {
@@ -221,7 +282,7 @@ const Header = ({ officer }: { officer: IOfficer }) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={officer?.name || 'Not login'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={officer?.name || '?'} src={officer?.avatar} />
+                <Avatar alt={record?.name || '?'} src={record?.avatar} />
               </IconButton>
             </Tooltip>
             <Menu

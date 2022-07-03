@@ -5,11 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"social-activities/internal/app/types"
 	"social-activities/internal/pkg/config"
 	"social-activities/internal/pkg/glog"
 	"social-activities/internal/pkg/respond"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,6 +24,7 @@ type (
 		ListSrv(ctx context.Context) ([]*types.Department, error)
 		AddSection(ctx context.Context, S types.Section) (*types.Section, error)
 		GetListSection(ctx context.Context, idDPM string) ([]*types.Section, error)
+		Disable(ctx context.Context, idDMP primitive.ObjectID, disable bool) error
 	}
 
 	Handler struct {
@@ -90,6 +94,19 @@ func (h *Handler) ListSection(c *fiber.Ctx) error {
 	}
 
 	return respond.JSON(c, http.StatusOK, s)
+}
+
+func (h *Handler) Disable(c *fiber.Ctx) error {
+
+	id, _ := primitive.ObjectIDFromHex(c.Params("id"))
+	b1, _ := strconv.ParseBool(c.Params("disable"))
+
+	err := h.srv.Disable(c.UserContext(), id, b1)
+	if err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
+	return respond.JSON(c, http.StatusOK, h.em.Success)
 }
 
 func (h *Handler) Test(c *fiber.Ctx) error {

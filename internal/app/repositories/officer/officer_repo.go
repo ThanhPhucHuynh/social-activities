@@ -84,12 +84,12 @@ func (r *MongoRepository) ResetPW(ctx context.Context, user types.Officer) error
 
 func (r *MongoRepository) Update(ctx context.Context, user types.Officer) error {
 	newPW := bson.M{"$set": bson.M{
-		"name":       user.Password,
-		"birthday":   user.Password,
-		"avatar":     user.Password,
-		"gender":     user.Password,
-		"country":    user.Password,
-		"phone":      user.Password,
+		"name":       user.Name,
+		"birthday":   user.Birthday,
+		"avatar":     user.Avatar,
+		"gender":     user.Gender,
+		"country":    user.Country,
+		"phone":      user.Phone,
 		"updated_at": time.Now(),
 	}}
 	_, err := r.collection().UpdateByID(ctx, user.ID, newPW)

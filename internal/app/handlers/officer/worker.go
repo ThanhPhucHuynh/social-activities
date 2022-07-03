@@ -23,6 +23,7 @@ type (
 		List(ctx context.Context) ([]*types.Officer, error)
 		ChangePW(ctx context.Context, email string, pw string) error
 		ResetPW(ctx context.Context, email string) error
+		UpdateSrv(ctx context.Context, u types.Officer) error
 	}
 
 	Handler struct {
@@ -117,5 +118,20 @@ func (h *Handler) ResetPW(c *fiber.Ctx) error {
 	if err := h.srv.ResetPW(c.UserContext(), c.Params("email")); err != nil {
 		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.IncorrectPasswordEmail)
 	}
+	return respond.JSON(c, http.StatusOK, h.em.Success)
+}
+
+func (h *Handler) Update(c *fiber.Ctx) error {
+	var u types.Officer
+
+	if err := json.Unmarshal(c.Body(), &u); err != nil {
+		h.logger.Errorc(c.UserContext(), "Can't unmarshal body %v", err)
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.ValidationFailed)
+	}
+
+	if err := h.srv.UpdateSrv(c.UserContext(), u); err != nil {
+		return respond.JSON(c, http.StatusBadRequest, h.em.InvalidValue.CodeExists)
+	}
+
 	return respond.JSON(c, http.StatusOK, h.em.Success)
 }

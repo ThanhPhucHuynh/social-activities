@@ -24,6 +24,7 @@ type Repository interface {
 	GetListSection(ctx context.Context, idDPM string) ([]*types.Section, error)
 	FindByNameSection(ctx context.Context, name string) (*types.Section, error)
 	FindBySectionNameId(ctx context.Context, name string, id primitive.ObjectID) (*types.Section, error)
+	Disable(ctx context.Context, idDMP primitive.ObjectID, disable bool) error
 }
 
 // Service is an user service
@@ -115,6 +116,17 @@ func (s *Service) GetListSection(ctx context.Context, idDMP string) ([]*types.Se
 	}
 
 	return ss, nil
+}
+
+func (s *Service) Disable(ctx context.Context, idDMP primitive.ObjectID, disable bool) error {
+
+	err := s.repo.Disable(ctx, idDMP, disable)
+	if err != nil {
+		s.logger.Errorf("Can't Disable ss %v", err)
+		return errors.Wrap(err, "Can't Disable dpm")
+	}
+
+	return nil
 }
 
 func (s *Service) TestS(ctx context.Context) string {

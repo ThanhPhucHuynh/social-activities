@@ -40,4 +40,7 @@ export const AddOfficer = (P: OfficerI): Promise<AxiosResponse<OfficerI[], any>>
 export const DelMedia = (I: string): Promise<AxiosResponse<OfficerI[], any>> => {
   return api.delete(`/media/${I}`);
 };
+export const updateOfficers = (P: OfficerI): Promise<AxiosResponse<OfficerI[], any>> => {
+  return api.put(`/officer`, P);
+};
 export {};

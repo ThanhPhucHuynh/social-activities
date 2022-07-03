@@ -69,7 +69,7 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		Country:  userLogin.Country,
 		Phone:    userLogin.Phone,
 		Salary:   0.0,
-		Role:     "none",
+		Role:     "officer",
 		CreateAt: time.Now(),
 		UpdateAt: time.Now()}
 
@@ -83,6 +83,8 @@ func (s *Service) RegisterSrv(ctx context.Context, userLogin types.Officer) (*ty
 		ID:    officer.ID,
 		Name:  officer.Name,
 		Email: officer.Email,
+		Code:  officer.Code,
+		Role:  officer.Role,
 	}, s.conf.Jwt.Duration)
 
 	if err != nil {
@@ -120,6 +122,7 @@ func (s *Service) LoginSrv(ctx context.Context, userLogin types.OfficerLogin) (*
 		ID:    user.ID,
 		Name:  user.Name,
 		Code:  user.Code,
+		Role:  user.Role,
 		Email: user.Email}, s.conf.Jwt.Duration)
 
 	if error != nil {
@@ -194,4 +197,36 @@ func (s *Service) ChangePW(ctx context.Context, email string, pw string) error {
 	}
 	s.logger.Infof("change pw completed ", user.Email)
 	return nil
+}
+
+func (s *Service) UpdateSrv(ctx context.Context, u types.Officer) error {
+
+	user, err := s.repo.FindByEmail(ctx, u.Email)
+	if err != nil {
+		s.logger.Errorf("Email not exits %v", err)
+		return errors.Wrap(errors.New("Email exits"), "Email not exits, can't update user")
+	}
+
+	officer := types.Officer{
+		ID:       user.ID,
+		Name:     u.Name,
+		Email:    user.Email,
+		Password: user.Password,
+		Code:     user.Code,
+		Birthday: u.Birthday,
+		Avatar:   u.Avatar,
+		Gender:   u.Gender,
+		Country:  u.Country,
+		Phone:    u.Phone,
+		Salary:   0.0,
+		Role:     user.Role,
+	}
+
+	if err := s.repo.Update(ctx, officer); err != nil {
+		s.logger.Errorf("Can't update user %v", err)
+		return errors.Wrap(err, "Can't update user")
+	}
+	s.logger.Errorf("updated user %v", officer.Email)
+	return nil
+
 }

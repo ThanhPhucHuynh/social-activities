@@ -11,6 +11,7 @@ export interface DepartmentI {
 export interface SectionI {
   _id: string;
   name: string;
+  disable?: boolean;
   department_id: string;
   department_name?: string;
   created_at?: string;

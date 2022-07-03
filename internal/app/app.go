@@ -28,6 +28,14 @@ import (
 	departmentHandler "social-activities/internal/app/handlers/department"
 	departmentRepository "social-activities/internal/app/repositories/department"
 	departmentSrv "social-activities/internal/app/services/department"
+
+	activityHandler "social-activities/internal/app/handlers/activity"
+	activityRepository "social-activities/internal/app/repositories/activity"
+	activitySrv "social-activities/internal/app/services/activity"
+
+	registerHandler "social-activities/internal/app/handlers/register"
+	registerRepository "social-activities/internal/app/repositories/register"
+	registerSrv "social-activities/internal/app/services/register"
 )
 
 const (
@@ -59,6 +67,8 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 	var officerRepo officerSrv.Repository
 	var mediaRepo mediaSrv.Repository
 	var departmentRepo departmentSrv.Repository
+	var activityRepo activitySrv.Repository
+	var registerRepo registerSrv.Repository
 
 	switch conns.Database.Type {
 	case db.TypeMongoDB:
@@ -70,25 +80,35 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 		officerRepo = officerRepository.NewMongoRepository(s)
 		mediaRepo = mediaRepository.NewMongoRepository(s)
 		departmentRepo = departmentRepository.NewMongoRepository(s)
+		activityRepo = activityRepository.NewMongoRepository(s)
+		registerRepo = registerRepository.NewMongoRepository(s)
 	default:
 		panic("database type not supported: " + conns.Database.Type)
 	}
 
-	userLogger := logger.WithField("package", "user")
+	userLogger := logger.WithField("api", "user")
 	userService := userSrv.NewService(conns, &em, userRepo, userLogger)
 	userHandler := userHandler.New(conns, &em, userService, userLogger)
 
-	officerLogger := logger.WithField("package", "officer")
+	officerLogger := logger.WithField("api", "officer")
 	officerService := officerSrv.NewService(conns, &em, officerRepo, officerLogger)
 	officerHandler := officerHandler.New(conns, &em, officerService, officerLogger)
 
-	mediaLogger := logger.WithField("package", "media")
+	mediaLogger := logger.WithField("api", "media")
 	mediaService := mediaSrv.NewService(conns, &em, mediaRepo, mediaLogger)
 	mediaHandler := mediaHandler.New(conns, &em, mediaService, mediaLogger)
 
-	departmentLogger := logger.WithField("package", "department")
+	departmentLogger := logger.WithField("api", "department")
 	departmentServices := departmentSrv.NewService(conns, &em, departmentRepo, departmentLogger)
 	departmenthandler := departmentHandler.New(conns, &em, departmentServices, departmentLogger)
+
+	activityLogger := logger.WithField("api", "activity")
+	activityServices := activitySrv.NewService(conns, &em, activityRepo, activityLogger)
+	activityhandler := activityHandler.New(conns, &em, activityServices, activityLogger)
+
+	registerLogger := logger.WithField("api", "register")
+	registerServices := registerSrv.NewService(conns, &em, registerRepo, registerLogger)
+	registerhandler := registerHandler.New(conns, &em, registerServices, registerLogger)
 
 	middleware := middleware.New(conns, &em)
 
@@ -127,6 +147,14 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			handlers: []func(c *fiber.Ctx) error{
 				middleware.Auth,
 				officerHandler.GetList,
+			},
+		},
+		{
+			path:   "/officer",
+			method: put,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				officerHandler.Update,
 			},
 		},
 		{
@@ -200,11 +228,166 @@ func Init(conns *config.Config, em config.ErrorMessage) (*App, error) {
 			},
 		},
 		{
+			path:   "/section",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.AddSection,
+			},
+		},
+		{
 			path:   "/section/:id",
 			method: get,
 			handlers: []func(c *fiber.Ctx) error{
 				middleware.Auth,
 				departmenthandler.ListSection,
+			},
+		},
+		{
+			path:   "/section/disable/:id/:disable",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				departmenthandler.Disable,
+			},
+		},
+		//activity
+		{
+			path:   "/activity",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Add,
+			},
+		},
+		{
+			path:   "/activity",
+			method: put,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Update,
+			},
+		},
+		{
+			path:   "/activity/acception",
+			method: patch,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Accept,
+			},
+		},
+		{
+			path:   "/activity/complete",
+			method: patch,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Complete,
+			},
+		},
+		{
+			path:   "/activity/destroy",
+			method: patch,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.Destroy,
+			},
+		},
+		{
+			path:   "/activity/all",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.GetAll,
+			},
+		},
+		{
+			path:   "/activity/all/:officerId",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.GetAllListAllSrvIngone,
+			},
+		},
+		{
+			path:   "/activity/list/:officerId",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.GetListAllByIdOfficer,
+			},
+		},
+		{
+			path:   "/activity/list",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				activityhandler.GetListByIdOfficer,
+			},
+		},
+
+		//register
+		{
+			path:   "/activity/register",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.Add,
+			},
+		},
+		{
+			path:   "/register/all",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.List,
+			},
+		},
+		{
+			path:   "/register/officer/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdOfficer,
+			},
+		},
+		{
+			path:   "/register/officer/info/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdOfficerInfo,
+			},
+		},
+		{
+			path:   "/register/activity/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdActivity,
+			},
+		},
+		{
+			path:   "/register/activity/info/:id",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.GetListByIdActivityInfo,
+			},
+		},
+		{
+			path:   "/rate/:id/:rate",
+			method: get,
+			handlers: []func(c *fiber.Ctx) error{
+				middleware.Auth,
+				registerhandler.Rate,
+			},
+		},
+
+		{
+			path:   "/mail",
+			method: post,
+			handlers: []func(c *fiber.Ctx) error{
+				userHandler.TestMail,
 			},
 		},
 	}
