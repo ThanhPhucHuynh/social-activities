@@ -35,7 +35,11 @@ function Home({ officer }: { officer: IOfficer }): React.ReactElement {
     <div className="App">
       {/* <Header officer={officer} /> */}
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img
+          src={'https://cdn-icons-png.flaticon.com/512/7851/7851083.png'}
+          // className="App-logo"
+          alt="logo"
+        />
         {/* <Box width={300}>
           <Slider size="small" defaultValue={70} aria-label="Small" valueLabelDisplay="auto" />
           <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
