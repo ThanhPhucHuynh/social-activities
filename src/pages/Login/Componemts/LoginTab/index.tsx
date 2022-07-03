@@ -71,7 +71,7 @@ const LoginTab = () => {
               rules={[{ required: true, message: 'Please input your email!' }]}
             >
               <Select>
-                {['tphuc@gmail.com', 'tphuc2@gmail.com', 'root@gmail.com'].map((e) => {
+                {['phat@gmail.com', 'phat2@gmail.com', 'root@gmail.com'].map((e) => {
                   return (
                     <Option key={e} value={e} label={e}>
                       {e}
